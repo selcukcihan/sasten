@@ -19,53 +19,45 @@ To read more about using these font, please visit the Next.js documentation:
 **/
 import { Button } from "@/components/ui/button"
 import { Session } from "next-auth"
+import { signIn, signOut } from "../auth"
+import { Quiz } from '../core/db'
+import { QuestionsView } from "./questions-view"
 
-export function Quiz(props: any) {
+export function QuizView(props: any) {
   const session = props.session as (Session | null)
+  const quiz = props.quiz as Quiz
   return (
     <div className="flex flex-col h-screen">
       <header className="bg-gray-900 text-white py-4 px-6">
         <div className="container mx-auto flex justify-between items-center">
           <h1 className="text-2xl font-bold">Developer Quiz</h1>
-          <div className="flex items-center space-x-4">
-            <Button size="sm" variant="secondary">
-              <ChromeIcon className="h-4 w-4 mr-2" />
-              Sign in with Google
-            </Button>
+          <div>
+            {session ? (
+              <form
+                action={async () => {
+                  "use server"
+                  await signOut()
+                }}
+              >
+                <Button variant="outline" type="submit">Sign Out</Button>
+              </form>
+            ) : (
+              <form
+                action={async () => {
+                  "use server"
+                  await signIn("google")
+                }}
+              >
+                <Button size="sm" type="submit" variant="secondary">
+                  <ChromeIcon className="h-4 w-4 mr-2" />
+                  Sign in with Google
+                </Button>
+              </form>
+            )}
           </div>
         </div>
       </header>
-      <main className="flex-1 bg-gray-100 dark:bg-gray-800 p-8 flex flex-col items-center justify-center">
-        <div className="bg-white dark:bg-gray-900 shadow-lg rounded-lg w-full max-w-3xl p-8">
-          <div className="flex items-center justify-between mb-6">
-            <div className="text-gray-500 dark:text-gray-400">Question 1 of 10</div>
-            <div className="text-gray-500 dark:text-gray-400">Score: 0/10</div>
-          </div>
-          <h2 className="text-2xl font-bold mb-4">What is the purpose of the foo bar directive in JavaScript?</h2>
-          <div className="grid grid-cols-2 gap-4">
-            <button className="bg-gray-200 dark:bg-gray-700 dark:text-gray-200 rounded-lg py-3 px-6 hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors">
-              Enables strict mode
-            </button>
-            <button className="bg-gray-200 dark:bg-gray-700 dark:text-gray-200 rounded-lg py-3 px-6 hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors">
-              Disables strict mode
-            </button>
-            <button className="bg-gray-200 dark:bg-gray-700 dark:text-gray-200 rounded-lg py-3 px-6 hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors">
-              Enforces type checking
-            </button>
-            <button className="bg-gray-200 dark:bg-gray-700 dark:text-gray-200 rounded-lg py-3 px-6 hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors">
-              Improves performance
-            </button>
-          </div>
-          <div className="flex justify-between mt-6">
-            <button className="bg-gray-200 dark:bg-gray-700 dark:text-gray-200 rounded-lg py-3 px-6 hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors">
-              Previous
-            </button>
-            <button className="bg-gray-200 dark:bg-gray-700 dark:text-gray-200 rounded-lg py-3 px-6 hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors">
-              Next
-            </button>
-          </div>
-        </div>
-      </main>
+      <QuestionsView session={session} quiz={quiz} />
       <footer className="bg-gray-900 text-white py-4 px-6">
         <div className="container mx-auto flex justify-between items-center">
           <div>

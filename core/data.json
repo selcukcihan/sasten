@@ -1,0 +1,32 @@
+[
+  {
+    "question": "Which sorting algorithm has an average time complexity of O(n log n)?",
+    "options": [
+      "Bubble Sort",
+      "Quick Sort",
+      "Insertion Sort",
+      "Selection Sort"
+    ],
+    "answer": 1
+  },
+  {
+    "question": "What is the primary purpose of a SQL SELECT statement?",
+    "options": [
+      "Insert data into a table",
+      "Delete data from a table",
+      "Retrieve data from a table",
+      "Update data in a table"
+    ],
+    "answer": 2
+  },
+  {
+    "question": "In networking, what does TCP stand for?",
+    "options": [
+      "Transmission Control Protocol",
+      "Time Control Protocol",
+      "Transport Connection Protocol",
+      "Technical Communication Protocol"
+    ],
+    "answer": 0
+  }
+]
