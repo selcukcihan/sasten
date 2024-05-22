@@ -65,17 +65,8 @@ export function QuestionsView(props: any) {
     }
   }
 
-  const getSubmitButtonClassName = (disabled: boolean) => {
-    const others = " rounded-lg py-3 px-6 transition-colors w-72"
-    if (!disabled) {
-      return "bg-gray-200 dark:bg-gray-900 dark:text-gray-200 hover:bg-gray-300 dark:hover:bg-gray-600" + others
-    } else {
-      return "bg-gray-300 dark:bg-gray-900 dark:text-gray-400" + others
-    }
-  }
-
   return (
-    <main className={`flex-1 bg-gray-100 dark:bg-gray-800 p-8 flex flex-col items-center justify-center ${user ? '' : 'pointer-events-none'}`}>
+    <main className={`flex-1 bg-gray-100 dark:bg-gray-800 p-8 flex flex-col items-center justify-center`}>
       {userQuiz && <div className="dark:text-white py-4 px-6 text-center">
         <h3 className="text-base font-bold">{getOutcome()}</h3>
         <p>Come back tomorrow for the next quiz!</p>
@@ -113,11 +104,7 @@ export function QuestionsView(props: any) {
         {!submitted &&
         <div className="flex-1 lg:flex-none order-first lg:order-last">
           <form action={() => submitQuiz(quiz, answers, user?.score || 0)}>
-            <button
-                disabled={answers.includes(-1)}
-                className={getSubmitButtonClassName(answers.includes(-1))}>
-              {(answers.includes(-1)) ? `Complete the quiz to submit` : `Submit your answers`}
-            </button>
+            <SubmitButton {...props} user={user} answers={answers} />
           </form>
         </div>
         }
@@ -135,5 +122,35 @@ export function QuestionsView(props: any) {
         )}
       </div>
     </main>
+  )
+}
+
+const SubmitButton = (props: any) => {
+  const getSubmitButtonClassName = (disabled: boolean) => {
+    const others = " rounded-lg py-3 px-6 transition-colors w-72"
+    if (!disabled) {
+      return "bg-gray-200 dark:bg-gray-900 dark:text-gray-200 hover:bg-gray-300 dark:hover:bg-gray-600" + others
+    } else {
+      return "bg-gray-300 dark:bg-gray-900 dark:text-gray-400" + others
+    }
+  }
+  const user = props.user as User | undefined
+  const answers = props.answers as number[]
+
+  let text = ''
+  if (!user) {
+    text = 'Sign in to submit the quiz'
+  } else if (answers.includes(-1)) {
+    text = 'Complete the quiz to submit'
+  } else {
+    text = 'Submit your answers'
+  }
+
+  return (
+    <button
+      disabled={!user || answers.includes(-1)}
+      className={getSubmitButtonClassName(!user || answers.includes(-1))}>
+      {text}
+    </button>
   )
 }
