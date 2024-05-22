@@ -72,7 +72,7 @@ export function QuizView(props: any) {
                     await signIn("google")
                   }}
                 >
-                  <Button size="sm" type="submit" variant="secondary">
+                  <Button size="sm" type="submit" variant="secondary" className="lg:text-base lg:font-semibold">
                     <ChromeIcon className="h-4 w-4 mr-2" />
                     Sign in with Google
                   </Button>

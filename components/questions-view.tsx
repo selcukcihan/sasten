@@ -77,7 +77,7 @@ export function QuestionsView(props: any) {
           <div className="text-gray-500 dark:text-gray-400">{userQuiz ? `Score: ${userQuiz.score}` : ''}</div>
         </div>
         <h2 className="text-2xl font-bold mb-4 dark:text-gray-100">{quiz.questions[currentQuestion].question}</h2>
-        <div className={`grid grid-cols-2 gap-4 ${userQuiz ? 'pointer-events-none' : ''}`}>
+        <div className={`grid grid-cols-1 lg:grid-cols-2 gap-4 ${userQuiz ? 'pointer-events-none' : ''}`}>
           {quiz.questions[currentQuestion].options.map((answer, idx) => (
             <button key={idx} onClick={() => setAnswers(answers.map((ans, i) => i === currentQuestion ? idx : ans))}
                     className={getOptionClassName(idx)}>
