@@ -91,7 +91,7 @@ export function QuizView(props: any) {
                 <div className={getLeaderBoardRowClassName(idx)}>
                   {idx + 1}
                 </div>
-                <div>{user.name} - {user.score}</div>
+                <div>{user.name} -- {user.score}</div>
               </div>
             ))}
           </div>

@@ -34,6 +34,23 @@ export function QuestionsView(props: any) {
   const [answers, setAnswers] = useState(userQuiz?.answers ||  quiz.questions.map(() => -1))
   const [submitted, setSubmitted] = useState(!!userQuiz)
 
+  const getOutcome = () => {
+    if (!userQuiz) return
+    const totalQuestions = userQuiz.answers.length
+    switch (userQuiz.score) {
+      case 0:
+        return 'Oops! You missed all the questions.'
+      case totalQuestions:
+        return 'Excellent! You got all the questions right.'
+      case totalQuestions - 1:
+        return 'Great job! You only missed one question.'
+      case totalQuestions - 2:
+        return 'Nice try! You missed two questions.'
+      default:
+        return 'Not so bad, better luck next time!'
+    }
+  }
+
   const getOptionClassName = (optionIdx: number) => {
     const others = "rounded-lg py-3 px-6 dark:text-gray-200 transition-colors"
     return answers[currentQuestion] === optionIdx ? `bg-green-400 dark:bg-green-700 ${others}` : `bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 ${others}`
@@ -59,6 +76,10 @@ export function QuestionsView(props: any) {
 
   return (
     <main className={`flex-1 bg-gray-100 dark:bg-gray-800 p-8 flex flex-col items-center justify-center ${user ? '' : 'pointer-events-none'}`}>
+      {userQuiz && <div className="dark:text-white py-4 px-6 text-center">
+        <h3 className="text-base font-bold">{getOutcome()}</h3>
+        <p>Come back tomorrow for the next quiz!</p>
+      </div>}
       <div className="bg-white dark:bg-gray-900 shadow-lg rounded-lg w-full max-w-3xl p-8">
         <div className="flex items-center justify-between mb-6">
           <div className="text-gray-500 dark:text-gray-400">Question {currentQuestion + 1} of {quiz.questions.length}</div>
@@ -102,8 +123,14 @@ export function QuestionsView(props: any) {
         }
         {user?.id && (
           <div className="dark:text-gray-100 px-8 lg:flex-1">
-            <p>Total score: {user.score}</p>
-            <p>Games played: {user.gamesPlayed || 0}</p>
+            <div className="w-36 flex flex-row">
+              <span className="flex-1">Total score</span>
+              <span>{user.score}</span>
+            </div>
+            <div className="w-36 flex flex-row">
+              <span className="flex-1">Games played</span>
+              <span>{user.gamesPlayed}</span>
+            </div>
           </div>
         )}
       </div>
