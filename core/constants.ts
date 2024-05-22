@@ -1,0 +1,1 @@
+export const LEADER_BOARD_NUMBER_OF_USERS = 5

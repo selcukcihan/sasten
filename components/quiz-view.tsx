@@ -20,81 +20,80 @@ To read more about using these font, please visit the Next.js documentation:
 import { Button } from "@/components/ui/button"
 import { Session } from "next-auth"
 import { signIn, signOut } from "../auth"
-import { Quiz } from '../core/db'
+import { LeaderBoardUser, Quiz, QuizSubmission, User } from '../core/db'
 import { QuestionsView } from "./questions-view"
+import { LEADER_BOARD_NUMBER_OF_USERS } from "../core/constants"
+
+const getLeaderBoardRowClassName = (idx: number) => {
+  const others = "text-white font-bold rounded-full w-8 h-8 flex items-center justify-center mr-2 "
+  switch (idx) {
+    case 0:
+      return others + " bg-yellow-500"
+    default:
+      return others + " bg-gray-500"
+  }
+}
 
 export function QuizView(props: any) {
   const session = props.session as (Session | null)
   const quiz = props.quiz as Quiz
+  const user = props.user as User | undefined
+  const userQuiz = props.userQuiz as QuizSubmission | undefined
+  const topScores = props.topScores as LeaderBoardUser[]
+
   return (
     <div className="flex flex-col h-screen">
       <header className="bg-gray-900 text-white py-4 px-6">
-        <div className="container mx-auto flex justify-between items-center">
-          <h1 className="text-2xl font-bold">Developer Quiz</h1>
-          <div>
-            {session ? (
-              <form
-                action={async () => {
-                  "use server"
-                  await signOut()
-                }}
-              >
-                <Button variant="outline" type="submit">Sign Out</Button>
-              </form>
-            ) : (
-              <form
-                action={async () => {
-                  "use server"
-                  await signIn("google")
-                }}
-              >
-                <Button size="sm" type="submit" variant="secondary">
-                  <ChromeIcon className="h-4 w-4 mr-2" />
-                  Sign in with Google
-                </Button>
-              </form>
-            )}
+        <div className="container mx-auto flex flex-row justify-between items-center">
+          <h1 className="text-xl lg:text-2xl font-bold text-center">Developer Quiz</h1>
+          <div className="flex flex-col text-sm lg:text-lg">
+            <div className="text-gray-400">{user?.email}</div>
+            <div className="place-self-end text-black dark:text-white">
+              {session ? (
+                <form
+                  action={async () => {
+                    "use server"
+                    await signOut()
+                  }}
+                >
+                  <Button size="sm" variant="outline" type="submit">
+                    <LogOutIcon className="h-4 w-4 mr-2" />
+                    Sign Out
+                  </Button>
+                </form>
+              ) : (
+                <form
+                  action={async () => {
+                    "use server"
+                    await signIn("google")
+                  }}
+                >
+                  <Button size="sm" type="submit" variant="secondary">
+                    <ChromeIcon className="h-4 w-4 mr-2" />
+                    Sign in with Google
+                  </Button>
+                </form>
+              )}
+            </div>
           </div>
         </div>
       </header>
-      <QuestionsView session={session} quiz={quiz} />
+      <QuestionsView session={session} quiz={quiz} user={user} userQuiz={userQuiz} />
       <footer className="bg-gray-900 text-white py-4 px-6">
         <div className="container mx-auto flex justify-between items-center">
           <div>
             <h2 className="text-xl font-bold">Leaderboard</h2>
-            <p className="text-gray-400">Top 5 scores</p>
+            <p className="text-gray-400">Top {LEADER_BOARD_NUMBER_OF_USERS} scores</p>
           </div>
           <div className="flex flex-col items-end">
-            <div className="flex items-center mb-2">
-              <div className="bg-yellow-500 text-white font-bold rounded-full w-8 h-8 flex items-center justify-center mr-2">
-                1
+            {topScores.map((user, idx) => (
+              <div key={idx} className="flex items-center mb-2">
+                <div className={getLeaderBoardRowClassName(idx)}>
+                  {idx + 1}
+                </div>
+                <div>{user.name} - {user.score}</div>
               </div>
-              <div>John Doe - 10/10</div>
-            </div>
-            <div className="flex items-center mb-2">
-              <div className="bg-gray-500 text-white font-bold rounded-full w-8 h-8 flex items-center justify-center mr-2">
-                2
-              </div>
-              <div>Jane Smith - 9/10</div>
-            </div>
-            <div className="flex items-center mb-2">
-              <div className="bg-gray-500 text-white font-bold rounded-full w-8 h-8 flex items-center justify-center mr-2">
-                3
-              </div>
-              <div>Bob Johnson - 8/10</div>
-            </div>
-            <div className="flex items-center mb-2">
-              <div className="bg-gray-500 text-white font-bold rounded-full w-8 h-8 flex items-center justify-center mr-2">
-                4
-              </div>
-              <div>Alice Williams - 7/10</div>
-            </div>
-            <div className="flex items-center mb-2">
-              <div className="bg-gray-500 text-white font-bold rounded-full w-8 h-8 flex items-center justify-center mr-2">
-                5
-              </div>
-              <div>Tom Davis - 6/10</div>
-            </div>
+            ))}
           </div>
         </div>
       </footer>
@@ -121,6 +120,27 @@ function ChromeIcon(props: any) {
       <line x1="21.17" x2="12" y1="8" y2="8" />
       <line x1="3.95" x2="8.54" y1="6.06" y2="14" />
       <line x1="10.88" x2="15.46" y1="21.94" y2="14" />
+    </svg>
+  )
+}
+
+function LogOutIcon(props: any) {
+  return (
+    <svg
+      {...props}
+      xmlns="http://www.w3.org/2000/svg"
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+      <polyline points="16 17 21 12 16 7" />
+      <line x1="21" x2="9" y1="12" y2="12" />
     </svg>
   )
 }

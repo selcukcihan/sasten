@@ -21,23 +21,26 @@ To read more about using these font, please visit the Next.js documentation:
 **/
 
 import { Session } from "next-auth"
-import { Quiz } from '../core/db'
+import { Quiz, QuizSubmission, User } from '../core/db'
 import { useState } from "react"
 import { submitQuiz } from "../app/actions"
 
 export function QuestionsView(props: any) {
   const session = props.session as (Session | null)
   const quiz = props.quiz as Quiz
+  const user = props.user as User | undefined
+  const userQuiz = props.userQuiz as QuizSubmission | undefined
   const [currentQuestion, setCurrentQuestion] = useState(0)
-  const [answers, setAnswers] = useState(quiz.questions.map(() => -1))
-  const [submitted, setSubmitted] = useState(false)
+  const [answers, setAnswers] = useState(userQuiz?.answers ||  quiz.questions.map(() => -1))
+  const [submitted, setSubmitted] = useState(!!userQuiz)
+
   const getOptionClassName = (optionIdx: number) => {
     const others = "rounded-lg py-3 px-6 dark:text-gray-200 transition-colors"
     return answers[currentQuestion] === optionIdx ? `bg-green-400 dark:bg-green-700 ${others}` : `bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 ${others}`
   }
 
   const getNavigationButtonClassName = (disabled: boolean) => {
-    const others = " rounded-lg py-3 px-6 transition-colors"
+    const others = " rounded-lg py-3 px-6 transition-colors w-24"
     if (!disabled) {
       return "bg-gray-200 dark:bg-gray-700 dark:text-gray-200 hover:bg-gray-300 dark:hover:bg-gray-600" + others
     } else {
@@ -50,19 +53,19 @@ export function QuestionsView(props: any) {
     if (!disabled) {
       return "bg-gray-200 dark:bg-gray-900 dark:text-gray-200 hover:bg-gray-300 dark:hover:bg-gray-600" + others
     } else {
-      return "bg-gray-100 dark:bg-gray-900 dark:text-gray-400" + others
+      return "bg-gray-300 dark:bg-gray-900 dark:text-gray-400" + others
     }
   }
 
   return (
-    <main className="flex-1 bg-gray-100 dark:bg-gray-800 p-8 flex flex-col items-center justify-center">
+    <main className={`flex-1 bg-gray-100 dark:bg-gray-800 p-8 flex flex-col items-center justify-center ${user ? '' : 'pointer-events-none'}`}>
       <div className="bg-white dark:bg-gray-900 shadow-lg rounded-lg w-full max-w-3xl p-8">
         <div className="flex items-center justify-between mb-6">
           <div className="text-gray-500 dark:text-gray-400">Question {currentQuestion + 1} of {quiz.questions.length}</div>
-          <div className="text-gray-500 dark:text-gray-400">Score: 0/10</div>
+          <div className="text-gray-500 dark:text-gray-400">{userQuiz ? `Score: ${userQuiz.score}` : ''}</div>
         </div>
         <h2 className="text-2xl font-bold mb-4 dark:text-gray-100">{quiz.questions[currentQuestion].question}</h2>
-        <div className="grid grid-cols-2 gap-4">
+        <div className={`grid grid-cols-2 gap-4 ${userQuiz ? 'pointer-events-none' : ''}`}>
           {quiz.questions[currentQuestion].options.map((answer, idx) => (
             <button key={idx} onClick={() => setAnswers(answers.map((ans, i) => i === currentQuestion ? idx : ans))}
                     className={getOptionClassName(idx)}>
@@ -70,7 +73,7 @@ export function QuestionsView(props: any) {
             </button>
           ))}
         </div>
-        <div className="flex justify-between mt-6">
+        <div className="flex justify-between mt-6 font-light text-sm">
           <button
               onClick={() => {setCurrentQuestion(Math.max(0, currentQuestion - 1))}}
               disabled={currentQuestion === 0}
@@ -85,17 +88,25 @@ export function QuestionsView(props: any) {
           </button>
         </div>
       </div>
-      {!submitted &&
-      <div className="flex justify-center mt-6">
-        <form action={() => submitQuiz(quiz, answers)}>
-          <button
-              disabled={answers.includes(-1)}
-              className={getSubmitButtonClassName(answers.includes(-1))}>
-            {(answers.includes(-1)) ? `Complete the quiz to submit` : `Submit your answers`}
-          </button>
-        </form>
+      <div className="flex flex-col lg:flex-row mt-6 gap-y-4 w-full max-w-3xl">
+        {!submitted &&
+        <div className="flex-1 lg:flex-none order-first lg:order-last">
+          <form action={() => submitQuiz(quiz, answers, user?.score || 0)}>
+            <button
+                disabled={answers.includes(-1)}
+                className={getSubmitButtonClassName(answers.includes(-1))}>
+              {(answers.includes(-1)) ? `Complete the quiz to submit` : `Submit your answers`}
+            </button>
+          </form>
+        </div>
+        }
+        {user?.id && (
+          <div className="dark:text-gray-100 px-8 lg:flex-1">
+            <p>Total score: {user.score}</p>
+            <p>Games played: {user.gamesPlayed || 0}</p>
+          </div>
+        )}
       </div>
-      }
     </main>
   )
 }
