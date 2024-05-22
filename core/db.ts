@@ -2,7 +2,7 @@
 import { DynamoDBClient } from "@aws-sdk/client-dynamodb"
 import { DynamoDBDocumentClient, GetCommand, QueryCommand, PutCommand, UpdateCommand } from "@aws-sdk/lib-dynamodb"
 import { LEADER_BOARD_NUMBER_OF_USERS } from "./constants"
-// import sampleData from './data.json'
+import sampleData from './data.json'
 
 const client = new DynamoDBClient({})
 const docClient = DynamoDBDocumentClient.from(client)
@@ -39,22 +39,22 @@ export interface LeaderBoardUser {
 
 export const getTodaysQuiz = async () => {
   const today = new Date().toISOString().split('T')[0]
-  // return {
-  //   date: today,
-  //   questions: sampleData,
-  // }
-  const quiz = await docClient.send(new GetCommand({
+  const response = await docClient.send(new GetCommand({
     TableName: process.env.DYNAMODB_TABLE_NAME || '',
     Key: {
       pk: `QUIZ#${today}`,
       sk: `QUIZ`,
     },
   }))
-  return quiz.Item
+  // If we forgot to add the quiz for today, let's just return the sample quiz
+  return response.Item ? response.Item as Quiz : ({
+    date: today,
+    questions: sampleData,
+  })
 }
 
 export const getTopScores = async (): Promise<LeaderBoardUser[]> => {
-  const scores = await docClient.send(new QueryCommand({
+  const response = await docClient.send(new QueryCommand({
     TableName: process.env.DYNAMODB_TABLE_NAME || '',
     IndexName: 'GSI1',
     KeyConditionExpression: 'GSI1PK = :gsi1pk and begins_with(GSI1SK, :gsi1sk)',
@@ -65,7 +65,7 @@ export const getTopScores = async (): Promise<LeaderBoardUser[]> => {
     ScanIndexForward: false,
     Limit: LEADER_BOARD_NUMBER_OF_USERS,
   }))
-  return (scores.Items || []).map((item) => ({
+  return (response.Items || []).map((item) => ({
     score: item.score,
     userId: item.id,
     name: item.name,
@@ -109,23 +109,23 @@ export const completeQuiz = async (userId: string, date: string, answers: number
 }
 
 export const getUsersQuiz = async (userId: string, date: string): Promise<QuizSubmission | null> => {
-  const quiz = await docClient.send(new GetCommand({
+  const response = await docClient.send(new GetCommand({
     TableName: process.env.DYNAMODB_TABLE_NAME || '',
     Key: {
       pk: `USER#${userId}`,
       sk: `QUIZ#${date}`,
     },
   }))
-  return quiz.Item as QuizSubmission
+  return response.Item as QuizSubmission
 }
 
 export const getUser = async (userId: string): Promise<User | null> => {
-  const user = await docClient.send(new GetCommand({
+  const response = await docClient.send(new GetCommand({
     TableName: process.env.DYNAMODB_TABLE_NAME || '',
     Key: {
       pk: `USER#${userId}`,
       sk: `USER#${userId}`,
     },
   }))
-  return user.Item as User
+  return response.Item as User
 }
