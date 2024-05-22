@@ -46,12 +46,12 @@ export function QuizView(props: any) {
       <header className="bg-gray-900 text-white py-4 px-6">
         <div className="container mx-auto flex flex-row justify-between items-center">
           <div className="hidden lg:flex flex-row items-center gap-2">
-            <LogoIcon {...props} className="dark:fill-white" />
+            <LogoIcon {...props} className="fill-white" />
             <h1 className="text-xl lg:text-2xl font-bold text-center">Developer Quiz</h1>
           </div>
           <h1 className="text-xl lg:text-2xl font-bold text-center lg:hidden">Developer Quiz</h1>
           <div className="flex flex-col text-sm lg:text-lg">
-            <div className="text-gray-400">{user?.email}</div>
+            <div className="text-gray-300">{user?.email}</div>
             <div className="place-self-end text-black dark:text-white">
               {session ? (
                 <form
@@ -84,10 +84,9 @@ export function QuizView(props: any) {
       </header>
       <QuestionsView session={session} quiz={quiz} user={user} userQuiz={userQuiz} />
       <footer className="bg-gray-900 text-white py-4 px-6">
-        <div className="container mx-auto flex justify-between items-center">
+        <div className="flex flex-col items-center gap-2">
           <div>
             <h2 className="text-xl font-bold">Leaderboard</h2>
-            <p className="text-gray-400">Top {LEADER_BOARD_NUMBER_OF_USERS} scores</p>
           </div>
           <div className="flex flex-col items-end">
             {topScores.map((user, idx) => (

@@ -51,9 +51,48 @@ export function QuestionsView(props: any) {
     }
   }
 
-  const getOptionClassName = (optionIdx: number) => {
+  enum OptionButtonState {
+    Unanswered,
+    Answered,
+    Correct,
+    Incorrect,
+  }
+
+  const getOptionClassName = (optionButtonState: OptionButtonState) => {
     const others = "rounded-lg py-3 px-6 dark:text-gray-200 transition-colors"
-    return answers[currentQuestion] === optionIdx ? `bg-green-400 dark:bg-green-700 ${others}` : `bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 ${others}`
+    switch (optionButtonState) {
+      case OptionButtonState.Answered:
+        return `bg-blue-400 dark:bg-blue-700 ${others}`
+      case OptionButtonState.Correct:
+        return `bg-green-500 dark:bg-green-700 ${others}`
+      case OptionButtonState.Incorrect:
+        return `bg-orange-400 dark:bg-orange-800 ${others}`
+      default:
+        return `bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 ${others}`
+    }
+  }
+
+  const getOptionButton = (answer: string, optionIndex: number) => {
+    let optionButtonState = OptionButtonState.Unanswered
+    if (userQuiz) {
+      if (answers[currentQuestion] === optionIndex) {
+        if (optionIndex === quiz.questions[currentQuestion].answer) {
+          optionButtonState = OptionButtonState.Correct
+        } else {
+          optionButtonState = OptionButtonState.Incorrect
+        }
+      } else if (optionIndex === quiz.questions[currentQuestion].answer) {
+        optionButtonState = OptionButtonState.Correct
+      }
+    } else if (answers[currentQuestion] === optionIndex) {
+      optionButtonState = OptionButtonState.Answered
+    }
+    return (
+      <button key={optionIndex} onClick={() => setAnswers(answers.map((ans, i) => i === currentQuestion ? optionIndex : ans))}
+              className={getOptionClassName(optionButtonState)}>
+        {answer}
+      </button>
+    )
   }
 
   const getNavigationButtonClassName = (disabled: boolean) => {
@@ -78,12 +117,7 @@ export function QuestionsView(props: any) {
         </div>
         <h2 className="text-2xl font-bold mb-4 dark:text-gray-100">{quiz.questions[currentQuestion].question}</h2>
         <div className={`grid grid-cols-1 lg:grid-cols-2 gap-4 ${userQuiz ? 'pointer-events-none' : ''}`}>
-          {quiz.questions[currentQuestion].options.map((answer, idx) => (
-            <button key={idx} onClick={() => setAnswers(answers.map((ans, i) => i === currentQuestion ? idx : ans))}
-                    className={getOptionClassName(idx)}>
-              {answer}
-            </button>
-          ))}
+          {quiz.questions[currentQuestion].options.map((answer, idx) => getOptionButton(answer, idx))}
         </div>
         <div className="flex justify-between mt-6 font-light text-sm">
           <button
