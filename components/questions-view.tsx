@@ -32,7 +32,7 @@ export function QuestionsView(props: any) {
   const userQuiz = props.userQuiz as QuizSubmission | undefined
   const [currentQuestion, setCurrentQuestion] = useState(0)
   const [answers, setAnswers] = useState(userQuiz?.answers ||  quiz.questions.map(() => -1))
-  const [submitted, setSubmitted] = useState(!!userQuiz)
+  const [submitting, setSubmitting] = useState(false)
 
   const getOutcome = () => {
     if (!userQuiz) return
@@ -105,13 +105,13 @@ export function QuestionsView(props: any) {
   }
 
   return (
-    <main className={`flex-1 bg-gray-100 dark:bg-gray-800 p-4 lg:p-8 flex flex-col items-center justify-center`}>
+    <main className={`flex-1 bg-gray-100 dark:bg-gray-800 p-4 lg:p-8 flex flex-col items-center ${submitting ? 'pointer-events-none' : ''}`}>
       {userQuiz && <div className="dark:text-white py-4 px-6 text-center">
         <h3 className="text-base font-bold">{getOutcome()}</h3>
         <p>Come back tomorrow for the next quiz!</p>
       </div>}
-      <div className="bg-white dark:bg-gray-900 shadow-lg rounded-lg w-full max-w-3xl p-4 lg:p-8">
-        <div className="flex items-center justify-between mb-6">
+      <div className="bg-white dark:bg-gray-900 shadow-lg rounded-lg w-full max-w-3xl p-4 py-2 lg:p-8">
+        <div className="flex items-center justify-between mb-2 lg:mb-6">
           <div className="text-gray-500 dark:text-gray-400">Question {currentQuestion + 1} of {quiz.questions.length}</div>
           <div className="text-gray-500 dark:text-gray-400">{userQuiz ? `Score: ${userQuiz.score}` : ''}</div>
         </div>
@@ -135,15 +135,15 @@ export function QuestionsView(props: any) {
         </div>
       </div>
       <div className="flex flex-col mt-6">
-        {!submitted &&
+        {!userQuiz &&
         <div>
           <form action={() => submitQuiz(quiz, answers, user?.score || 0)}>
-            <SubmitButton {...props} user={user} answers={answers} />
+            <SubmitButton {...props} user={user} answers={answers} setSubmitting={setSubmitting} submitting={submitting} />
           </form>
         </div>
         }
         {user?.id && (
-          <div className="dark:text-gray-100 px-8 lg:flex-1">
+          <div className="dark:text-gray-100 px-8 lg:flex-1 pt-8 place-self-center">
             <div className="w-36 flex flex-row">
               <span className="flex-1">Total score</span>
               <span>{user.score}</span>
@@ -160,8 +160,12 @@ export function QuestionsView(props: any) {
 }
 
 const SubmitButton = (props: any) => {
+  const submitting = props.submitting as boolean
   const getSubmitButtonClassName = (disabled: boolean) => {
-    const others = " rounded-lg py-3 px-6 transition-colors w-72"
+    let others = " rounded-lg py-3 px-6 transition-colors w-72"
+    if (submitting) {
+      others += " animate-pulse"
+    }
     if (!disabled) {
       return "bg-gray-200 dark:bg-gray-900 dark:text-gray-200 lg:hover:bg-gray-300 dark:lg:hover:bg-gray-600" + others
     } else {
@@ -183,6 +187,7 @@ const SubmitButton = (props: any) => {
   return (
     <button
       disabled={!user || answers.includes(-1)}
+      onClick={() => props.setSubmitting(true)}
       className={getSubmitButtonClassName(!user || answers.includes(-1))}>
       {text}
     </button>

@@ -4,7 +4,6 @@ import { getTodaysQuiz, getUsersQuiz, getUser, getTopScores } from "../core/db"
 
 export default async function Home() {
   const session = await auth()
-  // get auth, get today’s questions, if authenticated, get user’s score + answers for today if already answered
   const quiz = await getTodaysQuiz()
   const topScores = await getTopScores()
   if (session && session.user?.id && quiz) {

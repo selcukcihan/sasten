@@ -43,11 +43,11 @@ export function QuizView(props: any) {
 
   return (
     <div className="flex flex-col h-screen">
-      <header className="bg-gray-900 text-white py-4 px-6">
+      <header className="bg-gray-900 text-white py-2 px-6">
         <div className="container mx-auto flex flex-row justify-between items-center">
           <div className="flex flex-col lg:flex-row items-center gap-2">
             <LogoIcon className="fill-white" />
-            <h1 className="text-xl lg:text-2xl font-bold text-center">Developer Quiz</h1>
+            <h1 className="text-xl lg:text-2xl font-bold text-center">Dev Quiz</h1>
           </div>
           <div className="flex flex-col text-sm lg:text-lg gap-4">
             <div className="text-gray-300">{user?.email}</div>
