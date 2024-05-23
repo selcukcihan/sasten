@@ -134,9 +134,9 @@ export function QuestionsView(props: any) {
           </button>
         </div>
       </div>
-      <div className="flex flex-col lg:flex-row mt-6 gap-y-4 w-full max-w-3xl">
+      <div className="flex flex-col mt-6">
         {!submitted &&
-        <div className="flex-1 lg:flex-none order-first lg:order-last">
+        <div>
           <form action={() => submitQuiz(quiz, answers, user?.score || 0)}>
             <SubmitButton {...props} user={user} answers={answers} />
           </form>
