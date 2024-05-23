@@ -62,7 +62,7 @@ export function QuestionsView(props: any) {
     const others = "rounded-lg py-3 px-6 dark:text-gray-200 transition-colors"
     switch (optionButtonState) {
       case OptionButtonState.Answered:
-        return `bg-gray-500 text-white ${others}`
+        return `bg-green-400 dark:bg-green-700 ${others}`
       case OptionButtonState.Correct:
         return `bg-green-500 dark:bg-green-700 ${others}`
       case OptionButtonState.Incorrect:
