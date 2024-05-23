@@ -68,7 +68,7 @@ export function QuestionsView(props: any) {
       case OptionButtonState.Incorrect:
         return `bg-orange-400 dark:bg-orange-800 ${others}`
       default:
-        return `bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 ${others}`
+        return `bg-gray-200 dark:bg-gray-700 lg:hover:bg-gray-300 dark:lg:hover:bg-gray-600 ${others}`
     }
   }
 
@@ -98,7 +98,7 @@ export function QuestionsView(props: any) {
   const getNavigationButtonClassName = (disabled: boolean) => {
     const others = " rounded-lg py-3 px-6 transition-colors w-24"
     if (!disabled) {
-      return "bg-gray-200 dark:bg-gray-700 dark:text-gray-200 hover:bg-gray-300 dark:hover:bg-gray-600" + others
+      return "bg-gray-200 dark:bg-gray-700 dark:text-gray-200 lg:hover:bg-gray-300 dark:lg:hover:bg-gray-600" + others
     } else {
       return "bg-gray-100 dark:bg-gray-800 dark:text-gray-400" + others
     }
@@ -163,7 +163,7 @@ const SubmitButton = (props: any) => {
   const getSubmitButtonClassName = (disabled: boolean) => {
     const others = " rounded-lg py-3 px-6 transition-colors w-72"
     if (!disabled) {
-      return "bg-gray-200 dark:bg-gray-900 dark:text-gray-200 hover:bg-gray-300 dark:hover:bg-gray-600" + others
+      return "bg-gray-200 dark:bg-gray-900 dark:text-gray-200 lg:hover:bg-gray-300 dark:lg:hover:bg-gray-600" + others
     } else {
       return "bg-gray-300 dark:bg-gray-900 dark:text-gray-400" + others
     }
