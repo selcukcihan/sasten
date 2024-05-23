@@ -1,3 +1,45 @@
+# Software Development Quiz Game
+
+* This is an app developed using NextJS on [Vercel](https://vercel.com).
+* It's using Amazon DynamoDB as the data store. Check out the [CloudFormation template](./aws_cloudformation_template.yaml) for details.
+* The UI components were built using [v0.dev](https://v0.dev).
+
+## Data Models
+
+### User
+{
+  pk: USER#{userId},
+  sk: USER#{userId},
+  email: string,
+  score: number,
+  gamesPlayed: number,
+  gsi1pk: LEADER_BOARD,
+  gsi1sk: SCORE#{score}#{userId},
+}
+
+### Quiz
+{
+  pk: QUIZ#{date},
+  sk: QUIZ,
+  questions: [
+    {
+      question: string,
+      options: string[],
+      answer: number,
+    }
+  ],
+}
+
+### Quiz Submission
+{
+  pk: USER#{userId},
+  sk: QUIZ#{date},
+  answers: number[],
+  score: number,
+  gsi1pk: SUBMISSION#{date},
+  gsi1sk: USER#{userId},
+}
+
 This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
 
 ## Getting Started

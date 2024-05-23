@@ -45,14 +45,13 @@ export function QuizView(props: any) {
     <div className="flex flex-col h-screen">
       <header className="bg-gray-900 text-white py-4 px-6">
         <div className="container mx-auto flex flex-row justify-between items-center">
-          <div className="hidden lg:flex flex-row items-center gap-2">
+          <div className="flex flex-col lg:flex-row items-center gap-2">
             <LogoIcon {...props} className="fill-white" />
             <h1 className="text-xl lg:text-2xl font-bold text-center">Developer Quiz</h1>
           </div>
-          <h1 className="text-xl lg:text-2xl font-bold text-center lg:hidden">Developer Quiz</h1>
-          <div className="flex flex-col text-sm lg:text-lg">
+          <div className="flex flex-col text-sm lg:text-lg gap-4">
             <div className="text-gray-300">{user?.email}</div>
-            <div className="place-self-end text-black dark:text-white">
+            <div className="place-self-center text-black dark:text-white">
               {session ? (
                 <form
                   action={async () => {
@@ -62,7 +61,7 @@ export function QuizView(props: any) {
                 >
                   <Button size="sm" variant="outline" type="submit">
                     <LogOutIcon className="h-4 w-4 mr-2" />
-                    Sign Out
+                    <span>Sign Out</span>
                   </Button>
                 </form>
               ) : (
@@ -94,7 +93,7 @@ export function QuizView(props: any) {
                 <div className={getLeaderBoardRowClassName(idx)}>
                   {idx + 1}
                 </div>
-                <div>{user.name} -- {user.score}</div>
+                <div>{user.name}: {user.score}</div>
               </div>
             ))}
           </div>
