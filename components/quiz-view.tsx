@@ -22,7 +22,6 @@ import { Session } from "next-auth"
 import { signIn, signOut } from "../auth"
 import { LeaderBoardUser, Quiz, QuizSubmission, User } from '../core/db'
 import { QuestionsView } from "./questions-view"
-import { LEADER_BOARD_NUMBER_OF_USERS } from "../core/constants"
 
 const getLeaderBoardRowClassName = (idx: number) => {
   const others = "text-white font-bold rounded-full w-8 h-8 flex items-center justify-center mr-2 "
@@ -50,7 +49,7 @@ export function QuizView(props: any) {
             <h1 className="text-xl lg:text-2xl font-bold text-center">Dev Quiz</h1>
           </div>
           <div className="flex flex-col text-sm lg:text-lg gap-4">
-            <div className="text-gray-300">{user?.email}</div>
+            {user && <div className="text-gray-300">{user.email}</div>}
             <div className="place-self-center text-black dark:text-white">
               {session ? (
                 <form
@@ -87,7 +86,7 @@ export function QuizView(props: any) {
           <div>
             <h2 className="text-xl font-bold">Leaderboard</h2>
           </div>
-          <div className="flex flex-col items-end">
+          <div className="flex flex-col">
             {topScores.map((user, idx) => (
               <div key={idx} className="flex items-center mb-2">
                 <div className={getLeaderBoardRowClassName(idx)}>
