@@ -5,8 +5,8 @@ import "./globals.css";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Software Developer Quiz",
-  description: "A quiz game for software developers",
+  title: "Dev Quiz",
+  description: "Test your programming knowledge with daily quizzes.",
 };
 
 export default function RootLayout({
