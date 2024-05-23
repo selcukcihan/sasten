@@ -6,18 +6,22 @@
 
 ## Data Models
 
-### User
+### QuizUser
+
+```
 {
   pk: USER#{userId},
-  sk: USER#{userId},
-  email: string,
-  score: number,
-  gamesPlayed: number,
+  sk: QUIZ_USER#{userId},
   gsi1pk: LEADER_BOARD,
   gsi1sk: SCORE#{score}#{userId},
+  score: number,
+  gamesPlayed: number,
 }
+```
 
 ### Quiz
+
+```
 {
   pk: QUIZ#{date},
   sk: QUIZ,
@@ -29,8 +33,11 @@
     }
   ],
 }
+```
 
 ### Quiz Submission
+
+```
 {
   pk: USER#{userId},
   sk: QUIZ#{date},
@@ -39,6 +46,46 @@
   gsi1pk: SUBMISSION#{date},
   gsi1sk: USER#{userId},
 }
+```
+
+### Models from Auth.js
+
+#### AuthUser
+
+```
+{
+  pk: USER#{userId},
+  sk: USER#{userId},
+  gsi1pk: USER#{email},
+  gsi1sk: USER#{email},
+  email: string,
+  name: string,
+}
+```
+
+#### AuthAccount
+
+```
+  pk: USER#{userId},
+  sk: ACCOUNT#{provider}#{providerAccountId},
+  gsi1pk: ACCOUNT#{provider},
+  gsi1sk: ACCOUNT#{providerAccountId},
+  provider: string,
+  providerAccountId: string,
+  userId: string,
+```
+
+#### AuthSession
+
+```
+  pk: USER#{userId},
+  sk: SESSION#{sessionToken},
+  gsi1pk: SESSION#{sessionToken},
+  gsi1sk: SESSION#{sessionToken},
+  userId: string,
+  sessionToken: string,
+  expires: number // after this date, TTL expires and dynamodb will delete the record
+```
 
 This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
 

@@ -46,7 +46,7 @@ export function QuizView(props: any) {
       <header className="bg-gray-900 text-white py-4 px-6">
         <div className="container mx-auto flex flex-row justify-between items-center">
           <div className="flex flex-col lg:flex-row items-center gap-2">
-            <LogoIcon {...props} className="fill-white" />
+            <LogoIcon className="fill-white" />
             <h1 className="text-xl lg:text-2xl font-bold text-center">Developer Quiz</h1>
           </div>
           <div className="flex flex-col text-sm lg:text-lg gap-4">
