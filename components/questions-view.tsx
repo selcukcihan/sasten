@@ -35,13 +35,13 @@ export function QuestionsView(props: any) {
   const [submitting, setSubmitting] = useState(false)
 
   const storageKey = `answers-${quiz.date}`
-  const storedAnswers = JSON.parse(localStorage.getItem(storageKey) || 'null') as number[] | null
+  const storedAnswers = JSON.parse(global?.localStorage?.getItem(storageKey) || 'null') as number[] | null
   if (storedAnswers && !userQuiz && user) {
     setAnswers(storedAnswers)
     localStorage.removeItem(storageKey)
     submitQuiz(quiz, storedAnswers, user.score)
   }
-  localStorage.removeItem(storageKey)
+  global?.localStorage && global.localStorage.removeItem(storageKey)
 
   const getOutcome = () => {
     if (!userQuiz) return
