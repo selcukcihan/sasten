@@ -23,7 +23,7 @@ To read more about using these font, please visit the Next.js documentation:
 import { Session } from "next-auth"
 import { Quiz, QuizSubmission, User } from '../core/db'
 import { useState } from "react"
-import { submitQuiz } from "../app/actions"
+import { submitQuiz, submitSignIn } from "../app/actions"
 
 export function QuestionsView(props: any) {
   const session = props.session as (Session | null)
@@ -33,6 +33,15 @@ export function QuestionsView(props: any) {
   const [currentQuestion, setCurrentQuestion] = useState(0)
   const [answers, setAnswers] = useState(userQuiz?.answers ||  quiz.questions.map(() => -1))
   const [submitting, setSubmitting] = useState(false)
+
+  const storageKey = `answers-${quiz.date}`
+  const storedAnswers = JSON.parse(localStorage.getItem(storageKey) || 'null') as number[] | null
+  if (storedAnswers && !userQuiz && user) {
+    setAnswers(storedAnswers)
+    localStorage.removeItem(storageKey)
+    submitQuiz(quiz, storedAnswers, user.score)
+  }
+  localStorage.removeItem(storageKey)
 
   const getOutcome = () => {
     if (!userQuiz) return
@@ -137,7 +146,14 @@ export function QuestionsView(props: any) {
       <div className="flex flex-col mt-6">
         {!userQuiz &&
         <div>
-          <form action={() => submitQuiz(quiz, answers, user?.score || 0)}>
+          <form action={() => {
+            if (user) {
+              submitQuiz(quiz, answers, user?.score || 0)
+            } else {
+              localStorage.setItem(storageKey, JSON.stringify(answers))
+              submitSignIn()
+            }
+          }}>
             <SubmitButton {...props} user={user} answers={answers} setSubmitting={setSubmitting} submitting={submitting} />
           </form>
         </div>
@@ -176,19 +192,19 @@ const SubmitButton = (props: any) => {
   const answers = props.answers as number[]
 
   let text = ''
-  if (!user) {
-    text = 'Sign in to submit the quiz'
-  } else if (answers.includes(-1)) {
+  if (answers.includes(-1)) {
     text = 'Complete the quiz to submit'
+  } else if (!user) {
+    text = 'Sign in to submit the quiz'
   } else {
     text = 'Submit your answers'
   }
 
   return (
     <button
-      disabled={!user || answers.includes(-1)}
+      disabled={answers.includes(-1)}
       onClick={() => props.setSubmitting(true)}
-      className={getSubmitButtonClassName(!user || answers.includes(-1))}>
+      className={getSubmitButtonClassName(answers.includes(-1))}>
       {text}
     </button>
   )
