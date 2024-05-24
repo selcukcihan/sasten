@@ -38,6 +38,11 @@ export interface LeaderBoardUser {
   name: string
 }
 
+export const getDefaultQuiz = (date?: string): Quiz => ({
+  date: date || new Date().toISOString().split('T')[0],
+  questions: sampleData,
+})
+
 export const getTodaysQuiz = async () => {
   const today = new Date().toISOString().split('T')[0]
   const response = await docClient.send(new GetCommand({
@@ -48,10 +53,7 @@ export const getTodaysQuiz = async () => {
     },
   }))
   // If we forgot to add the quiz for today, let's just return the sample quiz
-  return response.Item ? response.Item as Quiz : ({
-    date: today,
-    questions: sampleData,
-  })
+  return response.Item ? response.Item as Quiz : getDefaultQuiz(today)
 }
 
 export const getTopScores = async (): Promise<LeaderBoardUser[]> => {
