@@ -28,6 +28,10 @@ const getLeaderBoardRowClassName = (idx: number) => {
   switch (idx) {
     case 0:
       return others + " bg-yellow-500"
+    case 1:
+      return others + " bg-yellow-700"
+    case 2:
+      return others + " bg-yellow-900"
     default:
       return others + " bg-gray-500"
   }
