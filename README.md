@@ -1,5 +1,9 @@
 # Software Development Quiz Game
 
+Take a look at the app live on https://quiz.selcukcihan.com
+
+![Software Dev Quiz Screenshot](./public/quiz_screenshot.png)
+
 * This is an app developed using NextJS on [Vercel](https://vercel.com).
 * It's using Amazon DynamoDB as the data store. Check out the [CloudFormation template](./aws_cloudformation_template.yaml) for details.
 * The UI components were built using [v0.dev](https://v0.dev).
@@ -7,6 +11,9 @@
 ## Data Models
 
 ### QuizUser
+
+* This is the custom user record for the app. There is another user model (`AuthUser`) which is managed by auth.js
+* For this model, the secondary index is used as a leaderboard.
 
 ```
 {
@@ -20,6 +27,8 @@
 ```
 
 ### Quiz
+
+Represents a quiz with questions, options to select and the correct answer for each question.
 
 ```
 {
@@ -36,6 +45,10 @@
 ```
 
 ### Quiz Submission
+
+* Represents a quiz submission of a user.
+* We can query all submissions of a user on the primary index (table).
+* We can query all submissions across all users, for a given date, using the secondary index.
 
 ```
 {
