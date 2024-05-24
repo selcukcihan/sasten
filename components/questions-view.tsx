@@ -22,10 +22,11 @@ To read more about using these font, please visit the Next.js documentation:
 
 import { Session } from "next-auth"
 import { Quiz, QuizSubmission, User } from '../core/db'
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { submitQuiz, submitSignIn } from "../app/actions"
 
 export function QuestionsView(props: any) {
+  const [isClient, setIsClient] = useState(false)
   const session = props.session as (Session | null)
   const quiz = props.quiz as Quiz
   const user = props.user as User | undefined
@@ -34,14 +35,21 @@ export function QuestionsView(props: any) {
   const [answers, setAnswers] = useState(userQuiz?.answers ||  quiz.questions.map(() => -1))
   const [submitting, setSubmitting] = useState(false)
 
+  useEffect(() => {
+    setIsClient(true)
+  }, [])
+
   const storageKey = `answers-${quiz.date}`
-  const storedAnswers = JSON.parse(global?.localStorage?.getItem(storageKey) || 'null') as number[] | null
-  if (storedAnswers && !userQuiz && user) {
-    setAnswers(storedAnswers)
+
+  if (isClient) {
+    const storedAnswers = JSON.parse(localStorage.getItem(storageKey) || 'null') as number[] | null
+    if (storedAnswers && !userQuiz && user) {
+      setAnswers(storedAnswers)
+      localStorage.removeItem(storageKey)
+      submitQuiz(quiz, storedAnswers, user.score)
+    }
     localStorage.removeItem(storageKey)
-    submitQuiz(quiz, storedAnswers, user.score)
   }
-  global?.localStorage && global.localStorage.removeItem(storageKey)
 
   const getOutcome = () => {
     if (!userQuiz) return
@@ -146,9 +154,9 @@ export function QuestionsView(props: any) {
       <div className="flex flex-col mt-6">
         {!userQuiz &&
         <div>
-          <form action={() => {
+          <form action={async () => {
             if (user) {
-              submitQuiz(quiz, answers, user?.score || 0)
+              await submitQuiz(quiz, answers, user?.score || 0)
             } else {
               localStorage.setItem(storageKey, JSON.stringify(answers))
               submitSignIn()
