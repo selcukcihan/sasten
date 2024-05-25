@@ -24,6 +24,7 @@ import { Session } from "next-auth"
 import { Quiz, QuizSubmission, User } from '../core/db'
 import { useState, useEffect, useRef } from "react"
 import { submitQuiz, submitSignIn } from "../app/actions"
+import { useFormStatus } from "react-dom"
 
 enum OptionButtonState {
   Unanswered,
@@ -199,11 +200,14 @@ const SubmitButton = (props: any) => {
     text = 'Submit your answers'
   }
 
+  const { pending } = useFormStatus()
+  const disabled = pending || answers.includes(-1)
+
   return (
     <button
-      disabled={answers.includes(-1)}
+      disabled={disabled}
       onClick={() => props.setSubmitting(true)}
-      className={getSubmitButtonClassName(answers.includes(-1))}>
+      className={getSubmitButtonClassName(disabled)}>
       {text}
     </button>
   )
