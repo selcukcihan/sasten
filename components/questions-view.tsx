@@ -22,72 +22,75 @@ To read more about using these font, please visit the Next.js documentation:
 
 import { Session } from "next-auth"
 import { Quiz, QuizSubmission, User } from '../core/db'
-import { useState, useEffect } from "react"
+import { useState, useEffect, useRef } from "react"
 import { submitQuiz, submitSignIn } from "../app/actions"
 
+enum OptionButtonState {
+  Unanswered,
+  Answered,
+  Correct,
+  Incorrect,
+}
+
+const getOptionClassName = (optionButtonState: OptionButtonState) => {
+  const others = "rounded-lg py-3 px-6 dark:text-gray-200 transition-colors"
+  switch (optionButtonState) {
+    case OptionButtonState.Answered:
+      return `bg-blue-300 dark:bg-blue-700 ${others}`
+    case OptionButtonState.Correct:
+      return `bg-green-500 dark:bg-green-700 ${others}`
+    case OptionButtonState.Incorrect:
+      return `bg-orange-400 dark:bg-orange-800 ${others}`
+    default:
+      return `bg-gray-200 dark:bg-gray-700 lg:hover:bg-gray-300 dark:lg:hover:bg-gray-600 ${others}`
+  }
+}
+
+const getNavigationButtonClassName = (disabled: boolean) => {
+  const others = " rounded-lg py-3 px-6 transition-colors w-24"
+  if (!disabled) {
+    return "bg-gray-200 dark:bg-gray-700 dark:text-gray-200 lg:hover:bg-gray-300 dark:lg:hover:bg-gray-600" + others
+  } else {
+    return "bg-gray-100 dark:bg-gray-800 dark:text-gray-400" + others
+  }
+}
+
+const getOutcome = (userQuiz: QuizSubmission) => {
+  if (!userQuiz) return
+  const totalQuestions = userQuiz.answers.length
+  switch (userQuiz.score) {
+    case 0:
+      return 'Oops! You missed all the questions.'
+    case totalQuestions:
+      return 'Excellent! You got all the questions right.'
+    case totalQuestions - 1:
+      return 'Great job! You only missed one question.'
+    case totalQuestions - 2:
+      return 'Nice try! You missed two questions.'
+    default:
+      return 'Not so bad, better luck next time!'
+  }
+}
+
 export function QuestionsView(props: any) {
-  const [isClient, setIsClient] = useState(false)
+  const submitForm = useRef(null)
   const session = props.session as (Session | null)
   const quiz = props.quiz as Quiz
+  const storageKey = `answers-${quiz.date}`
   const user = props.user as User | undefined
   const userQuiz = props.userQuiz as QuizSubmission | undefined
   const [currentQuestion, setCurrentQuestion] = useState(0)
-  const [answers, setAnswers] = useState(userQuiz?.answers ||  quiz.questions.map(() => -1))
+  const [answers, setAnswers] = useState(userQuiz?.answers || quiz.questions.map(() => -1))
   const [submitting, setSubmitting] = useState(false)
 
   useEffect(() => {
-    setIsClient(true)
-  }, [])
-
-  const storageKey = `answers-${quiz.date}`
-
-  if (isClient) {
     const storedAnswers = JSON.parse(localStorage.getItem(storageKey) || 'null') as number[] | null
     if (storedAnswers && !userQuiz && user) {
       setAnswers(storedAnswers)
       localStorage.removeItem(storageKey)
-      submitQuiz(quiz, storedAnswers, user.score)
+      // (submitForm.current as any)?.submit()
     }
-    localStorage.removeItem(storageKey)
-  }
-
-  const getOutcome = () => {
-    if (!userQuiz) return
-    const totalQuestions = userQuiz.answers.length
-    switch (userQuiz.score) {
-      case 0:
-        return 'Oops! You missed all the questions.'
-      case totalQuestions:
-        return 'Excellent! You got all the questions right.'
-      case totalQuestions - 1:
-        return 'Great job! You only missed one question.'
-      case totalQuestions - 2:
-        return 'Nice try! You missed two questions.'
-      default:
-        return 'Not so bad, better luck next time!'
-    }
-  }
-
-  enum OptionButtonState {
-    Unanswered,
-    Answered,
-    Correct,
-    Incorrect,
-  }
-
-  const getOptionClassName = (optionButtonState: OptionButtonState) => {
-    const others = "rounded-lg py-3 px-6 dark:text-gray-200 transition-colors"
-    switch (optionButtonState) {
-      case OptionButtonState.Answered:
-        return `bg-blue-300 dark:bg-blue-700 ${others}`
-      case OptionButtonState.Correct:
-        return `bg-green-500 dark:bg-green-700 ${others}`
-      case OptionButtonState.Incorrect:
-        return `bg-orange-400 dark:bg-orange-800 ${others}`
-      default:
-        return `bg-gray-200 dark:bg-gray-700 lg:hover:bg-gray-300 dark:lg:hover:bg-gray-600 ${others}`
-    }
-  }
+  }, [userQuiz, user, quiz, storageKey])
 
   const getOptionButton = (answer: string, optionIndex: number) => {
     let optionButtonState = OptionButtonState.Unanswered
@@ -112,19 +115,10 @@ export function QuestionsView(props: any) {
     )
   }
 
-  const getNavigationButtonClassName = (disabled: boolean) => {
-    const others = " rounded-lg py-3 px-6 transition-colors w-24"
-    if (!disabled) {
-      return "bg-gray-200 dark:bg-gray-700 dark:text-gray-200 lg:hover:bg-gray-300 dark:lg:hover:bg-gray-600" + others
-    } else {
-      return "bg-gray-100 dark:bg-gray-800 dark:text-gray-400" + others
-    }
-  }
-
   return (
-    <main className={`flex-1 bg-gray-100 dark:bg-gray-800 p-4 lg:p-8 flex flex-col items-center ${submitting ? 'pointer-events-none' : ''}`}>
+    <main className={`flex-1 bg-gray-100 dark:bg-gray-800 p-4 lg:p-8 flex flex-col items-center ${submitting ? 'pointer-events-none blur-sm' : ''}`}>
       {userQuiz && <div className="dark:text-white py-4 px-6 text-center">
-        <h3 className="text-base font-bold">{getOutcome()}</h3>
+        <h3 className="text-base font-bold">{getOutcome(userQuiz)}</h3>
         <p>Come back tomorrow for the next quiz!</p>
       </div>}
       <div className="bg-white dark:bg-gray-900 shadow-lg rounded-lg w-full max-w-3xl p-4 py-2 lg:p-8">
@@ -154,13 +148,14 @@ export function QuestionsView(props: any) {
       <div className="flex flex-col mt-6">
         {!userQuiz &&
         <div>
-          <form action={async () => {
+          <form ref={submitForm} action={async () => {
             if (user) {
               await submitQuiz(quiz, answers, user?.score || 0)
             } else {
               localStorage.setItem(storageKey, JSON.stringify(answers))
-              submitSignIn()
+              await submitSignIn()
             }
+            setSubmitting(false)
           }}>
             <SubmitButton {...props} user={user} answers={answers} setSubmitting={setSubmitting} submitting={submitting} />
           </form>
@@ -184,12 +179,8 @@ export function QuestionsView(props: any) {
 }
 
 const SubmitButton = (props: any) => {
-  const submitting = props.submitting as boolean
   const getSubmitButtonClassName = (disabled: boolean) => {
     let others = " rounded-lg py-3 px-6 transition-colors w-72"
-    if (submitting) {
-      others += " animate-pulse"
-    }
     if (!disabled) {
       return "bg-gray-200 dark:bg-gray-900 dark:text-gray-200 lg:hover:bg-gray-300 dark:lg:hover:bg-gray-600" + others
     } else {
