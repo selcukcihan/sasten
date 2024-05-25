@@ -22,6 +22,7 @@ import { Session } from "next-auth"
 import { signIn, signOut } from "../auth"
 import { LeaderBoardUser, Quiz, QuizSubmission, User } from '../core/db'
 import { QuestionsView } from "./questions-view"
+import Link from "next/link"
 
 const getLeaderBoardRowClassName = (idx: number) => {
   const others = "text-white font-bold rounded-full w-8 h-8 flex items-center justify-center mr-2 "
@@ -100,6 +101,9 @@ export function QuizView(props: any) {
               </div>
             ))}
           </div>
+        </div>
+        <div className="text-xs text-gray-300 underline underline-offset-2">
+          <Link href={'https://github.com/selcukcihan/sasten'} target="#blank">Check out the project on GitHub.</Link>
         </div>
       </footer>
     </div>
