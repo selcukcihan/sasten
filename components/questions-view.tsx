@@ -87,10 +87,8 @@ export function QuestionsView(props: any) {
   useEffect(() => {
     const storedAnswers = JSON.parse(localStorage.getItem(storageKey) || 'null') as number[] | null
     if (storedAnswers && !userQuiz && user) {
-      setAnswers(storedAnswers)
-      localStorage.removeItem(storageKey)
-      setSubmitting(true);
-      (submitForm.current as any)?.requestSubmit()
+      setSubmitting(true)
+      ;(submitForm.current as any)?.requestSubmit()
     }
   }, [userQuiz, user, quiz, storageKey])
 
@@ -151,8 +149,14 @@ export function QuestionsView(props: any) {
         {!userQuiz &&
         <div>
           <form ref={submitForm} action={async () => {
+            setSubmitting(true)
             if (user) {
-              await submitQuiz(quiz, answers, user?.score || 0)
+              const storedAnswers = JSON.parse(localStorage.getItem(storageKey) || 'null') as number[] | null
+              if (storedAnswers) {
+                setAnswers(storedAnswers)
+                localStorage.removeItem(storageKey)
+              }
+              await submitQuiz(quiz, storedAnswers || answers, user?.score || 0)
             } else {
               localStorage.setItem(storageKey, JSON.stringify(answers))
               await submitSignIn()
