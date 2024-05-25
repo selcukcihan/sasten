@@ -89,7 +89,8 @@ export function QuestionsView(props: any) {
     if (storedAnswers && !userQuiz && user) {
       setAnswers(storedAnswers)
       localStorage.removeItem(storageKey)
-      // (submitForm.current as any)?.submit()
+      setSubmitting(true);
+      (submitForm.current as any)?.requestSubmit()
     }
   }, [userQuiz, user, quiz, storageKey])
 
