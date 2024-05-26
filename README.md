@@ -45,7 +45,7 @@ Represents a quiz with questions, options to select and the correct answer for e
 }
 ```
 
-### Quiz Submission
+### Quiz Submission
 
 * Represents a quiz submission of a user.
 * We can query all submissions of a user on the primary index (table).
