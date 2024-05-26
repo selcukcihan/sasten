@@ -7,6 +7,7 @@ Take a look at the app live on https://quiz.selcukcihan.com
 * This is an app developed using NextJS on [Vercel](https://vercel.com).
 * It's using Amazon DynamoDB as the data store. Check out the [CloudFormation template](./aws_cloudformation_template.yaml) for details.
 * The UI components were built using [v0.dev](https://v0.dev).
+* I'm using chatgpt to generate the questions, an example prompt can be found at [questions.md](./questions.md).
 
 ## Data Models
 
