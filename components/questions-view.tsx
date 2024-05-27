@@ -63,9 +63,9 @@ const getOutcome = (userQuiz: QuizSubmission) => {
     case 0:
       return 'Oops! You missed all the questions.'
     case totalQuestions:
-      return 'Excellent! You got all the questions right.'
+      return 'Excellent! You got it all correct.'
     case totalQuestions - 1:
-      return 'Great job! You only missed one question.'
+      return 'Great job! You only missed one.'
     case totalQuestions - 2:
       return 'Nice try! You missed two questions.'
     default:
@@ -117,7 +117,7 @@ export function QuestionsView(props: any) {
 
   return (
     <main className={`flex-1 bg-gray-100 dark:bg-gray-800 p-4 lg:p-8 flex flex-col items-center ${submitting ? 'pointer-events-none blur-sm' : ''}`}>
-      {userQuiz && <div className="dark:text-white py-4 px-6 text-center">
+      {userQuiz && <div className="mb-4 dark:text-white py-4 px-6 text-center w-full max-w-3xl shadow-lg rounded-lg dark:bg-gray-900">
         <h3 className="text-base font-bold">{getOutcome(userQuiz)}</h3>
         <p>Come back tomorrow for the next quiz!</p>
       </div>}
