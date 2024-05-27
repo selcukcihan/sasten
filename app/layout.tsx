@@ -1,7 +1,7 @@
 import type { Metadata } from "next"
 import { Inter } from "next/font/google"
 import "./globals.css"
-import { getDefaultQuiz } from "../core/db"
+import { getDefaultQuiz, getTodaysQuiz } from "../core/db"
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -16,20 +16,31 @@ const images = [{
   alt: title,
 }]
 
+export async function generateMetadata() {
+  const dynamicQuestion = await getTodaysQuiz()
+  const shortestQuestion = dynamicQuestion.questions.reduce((prev, curr) => prev.question.length < curr.question.length ? prev : curr)
+  return {
+    title: description,
+    description: shortestQuestion.question,
+    applicationName: title,
+    keywords: ['quiz', 'programming', 'dev', 'developer', 'coding', 'code', 'software', 'engineer', 'web', 'app', 'application', 'site', 'website', 'daily', 'challenge', 'test', 'knowledge', 'skills', 'learning', 'education', 'fun', 'game', 'puzzle', 'problem', 'solution', 'answer', 'question', 'multiple', 'choice', 'true', 'false', 'boolean', 'score', 'leaderboard', 'top', 'best', 'rank'],
+    openGraph: {
+      siteName: title,
+      title: description,
+      description: shortestQuestion.question,
+      type: 'website',
+      url: 'https://quiz.selcukcihan.com',
+      images,
+    },
+  }
+}
+
+/*
 export const metadata: Metadata = {
   title: description,
   description: firstQuestion,
   applicationName: title,
   keywords: ['quiz', 'programming', 'dev', 'developer', 'coding', 'code', 'software', 'engineer', 'web', 'app', 'application', 'site', 'website', 'daily', 'challenge', 'test', 'knowledge', 'skills', 'learning', 'education', 'fun', 'game', 'puzzle', 'problem', 'solution', 'answer', 'question', 'multiple', 'choice', 'true', 'false', 'boolean', 'score', 'leaderboard', 'top', 'best', 'rank'],
-  // twitter: {
-  //   card: 'summary',
-  //   title,
-  //   description: firstQuestion,
-  //   siteId: '134182720',
-  //   creator: '@scihan',
-  //   creatorId: '134182720',
-  //   images,
-  // },
   openGraph: {
     siteName: title,
     title: description,
@@ -39,6 +50,7 @@ export const metadata: Metadata = {
     images,
   },
 };
+*/
 
 export default function RootLayout({
   children,

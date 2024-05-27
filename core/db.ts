@@ -43,8 +43,14 @@ export const getDefaultQuiz = (date?: string): Quiz => ({
   questions: sampleData,
 })
 
+let todaysQuiz: Quiz | null = null
+
 export const getTodaysQuiz = async () => {
   const today = new Date().toISOString().split('T')[0]
+  if (todaysQuiz && todaysQuiz.date === today) {
+    return todaysQuiz
+  }
+
   const response = await docClient.send(new GetCommand({
     TableName: process.env.DYNAMODB_TABLE_NAME || '',
     Key: {
@@ -53,7 +59,12 @@ export const getTodaysQuiz = async () => {
     },
   }))
   // If we forgot to add the quiz for today, let's just return the sample quiz
-  return response.Item ? response.Item as Quiz : getDefaultQuiz(today)
+  if (response.Item) {
+    todaysQuiz = response.Item as Quiz
+    return todaysQuiz
+  } else {
+    return getDefaultQuiz(today)
+  }
 }
 
 export const getTopScores = async (): Promise<LeaderBoardUser[]> => {
