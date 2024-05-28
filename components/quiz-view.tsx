@@ -18,6 +18,7 @@ To read more about using these font, please visit the Next.js documentation:
 - Pages Directory: https://nextjs.org/docs/pages/building-your-application/optimizing/fonts
 **/
 import { Button } from "@/components/ui/button"
+import { DropdownMenuTrigger, DropdownMenuItem, DropdownMenuContent, DropdownMenu } from "@/components/ui/dropdown-menu"
 import { Session } from "next-auth"
 import { signIn, signOut } from "../auth"
 import { LeaderBoardUser, Quiz, QuizSubmission, User } from '../core/db'
@@ -54,34 +55,42 @@ export function QuizView(props: any) {
             <h1 className="text-xl lg:text-2xl font-bold text-center">Dev Quiz</h1>
           </div>
           <div className="flex flex-col text-sm lg:text-lg gap-4">
-            {user && <div className="text-gray-300">{user.email}</div>}
-            <div className="place-self-center text-black dark:text-white">
-              {session ? (
-                <form
-                  action={async () => {
-                    "use server"
-                    await signOut()
-                  }}
-                >
-                  <Button size="sm" variant="outline" type="submit">
-                    <LogOutIcon className="h-4 w-4 mr-2" />
-                    <span>Sign Out</span>
-                  </Button>
-                </form>
-              ) : (
-                <form
-                  action={async () => {
-                    "use server"
-                    await signIn("google")
-                  }}
-                >
-                  <Button size="sm" type="submit" variant="secondary" className="lg:text-base lg:font-semibold">
-                    <ChromeIcon className="h-4 w-4 mr-2" />
-                    Sign in with Google
-                  </Button>
-                </form>
-              )}
-            </div>
+            {session ? (
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <div className="flex items-center space-x-2 cursor-pointer">
+                  <div className="text-gray-400">john@example.com</div>
+                  <ChevronDownIcon className="h-4 w-4 text-gray-400" />
+                </div>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                <DropdownMenuItem>
+                  <form
+                    action={async () => {
+                      "use server"
+                      await signOut()
+                    }}
+                  >
+                    <Button size="sm" variant="outline" type="submit">
+                      <LogOutIcon className="h-4 w-4 mr-2" />
+                      <span>Logout</span>
+                    </Button>
+                  </form>
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>) : (
+            <form
+              action={async () => {
+                "use server"
+                await signIn("google")
+              }}
+            >
+              <Button size="sm" type="submit" variant="secondary" className="lg:text-base lg:font-semibold">
+                <ChromeIcon className="h-4 w-4 mr-2" />
+                Sign in with Google
+              </Button>
+            </form>
+            )}
           </div>
         </div>
       </header>
@@ -260,6 +269,25 @@ function LogoIcon(props: any) {
         c0.032-0.171-0.05-0.275-0.247-0.312c-0.122-0.023-0.219,0.005-0.285,0.082C7.729,17.787,7.689,17.885,7.677,18z M7.138,19.367
         l1.06,0.197L8.01,20.573l-1.06-0.198L7.138,19.367z"/>
     </g>
+    </svg>
+  )
+}
+
+function ChevronDownIcon(props: any) {
+  return (
+    <svg
+      {...props}
+      xmlns="http://www.w3.org/2000/svg"
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <path d="m6 9 6 6 6-6" />
     </svg>
   )
 }
