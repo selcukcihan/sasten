@@ -50,7 +50,7 @@ export function QuizView(props: any) {
     <div className="flex flex-col h-screen">
       <header className="bg-gray-900 text-white py-2 px-6">
         <div className="container mx-auto flex flex-row justify-between items-center">
-          <div className="flex flex-col lg:flex-row items-center gap-2">
+          <div className="flex flex-row items-center gap-2">
             <LogoIcon className="fill-white" />
             <h1 className="text-xl lg:text-2xl font-bold text-center">Dev Quiz</h1>
           </div>
@@ -87,7 +87,7 @@ export function QuizView(props: any) {
             >
               <Button size="sm" type="submit" variant="secondary" className="lg:text-base lg:font-semibold">
                 <ChromeIcon className="h-4 w-4 mr-2" />
-                Sign in with Google
+                Google sign in
               </Button>
             </form>
             )}
