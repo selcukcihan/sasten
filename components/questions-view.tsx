@@ -116,12 +116,12 @@ export function QuestionsView(props: any) {
   }
 
   return (
-    <main className={`flex-1 bg-gray-100 dark:bg-gray-800 p-4 lg:p-8 flex flex-col items-center ${submitting ? 'pointer-events-none blur-sm' : ''}`}>
+    <main className={`flex-1 lg:bg-gray-100 dark:bg-gray-800 p-4 lg:p-8 flex flex-col items-center ${submitting ? 'pointer-events-none blur-sm' : ''}`}>
       {userQuiz && <div className="mb-4 dark:text-white py-4 px-6 text-center w-full max-w-3xl shadow-lg rounded-lg dark:bg-gray-900">
         <h3 className="text-base font-bold">{getOutcome(userQuiz)}</h3>
         <p>Come back tomorrow for the next quiz!</p>
       </div>}
-      <div className="bg-white dark:bg-gray-900 shadow-lg rounded-lg w-full max-w-3xl p-4 py-2 lg:p-8">
+      <div className="lg:bg-white lg:dark:bg-gray-900 lg:shadow-lg lg:rounded-lg w-full max-w-3xl p-4 py-2 lg:p-8">
         <div className="flex items-center justify-between mb-2 lg:mb-6">
           <div className="text-gray-500 dark:text-gray-400">Question {currentQuestion + 1} of {quiz.questions.length}</div>
           <div className="text-gray-500 dark:text-gray-400">{userQuiz ? `Score: ${userQuiz.score}` : ''}</div>

@@ -102,8 +102,8 @@ export function QuizView(props: any) {
             ))}
           </div>
         </div>
-        <div className="text-xs text-gray-300 underline underline-offset-2">
-          <Link href={'https://github.com/selcukcihan/sasten'} target="#blank">Check out the project on GitHub.</Link>
+        <div className="text-xs text-gray-300 underline underline-offset-2 text-center lg:text-right">
+          <Link href={'https://github.com/selcukcihan/sasten'} target="#blank">Check out the project on GitHub</Link>
         </div>
       </footer>
     </div>
