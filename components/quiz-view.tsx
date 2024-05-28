@@ -55,11 +55,11 @@ export function QuizView(props: any) {
             <h1 className="text-xl lg:text-2xl font-bold text-center">Dev Quiz</h1>
           </div>
           <div className="flex flex-col text-sm lg:text-lg gap-4">
-            {session ? (
+            {user ? (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <div className="flex items-center space-x-2 cursor-pointer">
-                  <div className="text-gray-400">john@example.com</div>
+                  <div className="text-gray-400">{user.email}</div>
                   <ChevronDownIcon className="h-4 w-4 text-gray-400" />
                 </div>
               </DropdownMenuTrigger>
