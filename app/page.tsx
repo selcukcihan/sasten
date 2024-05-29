@@ -1,9 +1,19 @@
 import { auth } from "@/auth"
 import { QuizView } from "../components/quiz-view"
-import { getTodaysQuiz, getUsersQuiz, getUser, getTopScores, getAllScores } from "../core/db"
+import { getTodaysQuiz, getUsersQuiz, getQuiz, getUser, getTopScores, getAllScores } from "../core/db"
 
-export default async function Home() {
+export default async function Home({
+  searchParams,
+}: {
+  searchParams?: { [key: string]: string | string[] | undefined };
+}) {
   const session = await auth()
+  if (searchParams?.["date"] && session?.user?.email === 'selcukcihan@gmail.com') {
+    const quiz = await getQuiz(searchParams["date"] as string)
+    if (quiz) {
+      return <QuizView session={session} quiz={quiz} />
+    }
+  }
   const quiz = await getTodaysQuiz()
   const topScores = await getTopScores()
   if (session && session.user?.id && quiz) {

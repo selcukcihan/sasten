@@ -45,23 +45,28 @@ export const getDefaultQuiz = (date?: string): Quiz => ({
 
 let todaysQuiz: Quiz | null = null
 
+export const getQuiz = async (date: string) => {
+  const response = await docClient.send(new GetCommand({
+    TableName: process.env.DYNAMODB_TABLE_NAME || '',
+    Key: {
+      pk: `QUIZ#${date}`,
+      sk: `QUIZ`,
+    },
+  }))
+  return response.Item ? response.Item as Quiz : null
+}
+
 export const getTodaysQuiz = async () => {
   const today = new Date().toISOString().split('T')[0]
   if (todaysQuiz && todaysQuiz.date === today) {
     return todaysQuiz
   }
 
-  const response = await docClient.send(new GetCommand({
-    TableName: process.env.DYNAMODB_TABLE_NAME || '',
-    Key: {
-      pk: `QUIZ#${today}`,
-      sk: `QUIZ`,
-    },
-  }))
+  const quiz = await getQuiz(today)
   // If we forgot to add the quiz for today, let's just return the sample quiz
-  if (response.Item) {
-    todaysQuiz = response.Item as Quiz
-    return todaysQuiz
+  if (quiz) {
+    todaysQuiz = quiz
+    return quiz
   } else {
     return getDefaultQuiz(today)
   }
