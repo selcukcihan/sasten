@@ -21,7 +21,7 @@ To read more about using these font, please visit the Next.js documentation:
 **/
 
 import { Session } from "next-auth"
-import { Quiz, QuizSubmission, User } from '../core/db'
+import { LeaderBoardUser, Quiz, QuizSubmission, User } from '../core/db'
 import { useState, useEffect, useRef } from "react"
 import { submitQuiz, submitSignIn } from "../app/actions"
 import { useFormStatus } from "react-dom"
@@ -60,12 +60,18 @@ export function QuestionsView(props: any) {
   const submitForm = useRef(null)
   const session = props.session as (Session | null)
   const quiz = props.quiz as Quiz
+  const allScores = props.allScores as LeaderBoardUser[]
   const storageKey = `answers-${quiz.date}`
   const user = props.user as User | undefined
   const userQuiz = props.userQuiz as QuizSubmission | undefined
   const [currentQuestion, setCurrentQuestion] = useState(0)
   const [answers, setAnswers] = useState(userQuiz?.answers || quiz.questions.map(() => -1))
   const [submitting, setSubmitting] = useState(false)
+
+  const getUsersRanking = () => {
+    if (!user) return 0
+    return allScores.sort((a, b) => b.score - a.score).findIndex(u => u.userId === user.id) + 1
+  }
 
   useEffect(() => {
     const storedAnswers = JSON.parse(localStorage.getItem(storageKey) || 'null') as number[] | null
@@ -155,6 +161,10 @@ export function QuestionsView(props: any) {
             <div className="w-36 flex flex-row">
               <span className="flex-1">Games played</span>
               <span>{user.gamesPlayed}</span>
+            </div>
+            <div className="w-36 flex flex-row">
+              <span className="flex-1">Ranking</span>
+              <span>{getUsersRanking()}/{allScores.length}</span>
             </div>
           </div>
         )}

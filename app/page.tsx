@@ -1,6 +1,6 @@
 import { auth } from "@/auth"
 import { QuizView } from "../components/quiz-view"
-import { getTodaysQuiz, getUsersQuiz, getUser, getTopScores } from "../core/db"
+import { getTodaysQuiz, getUsersQuiz, getUser, getTopScores, getAllScores } from "../core/db"
 
 export default async function Home() {
   const session = await auth()
@@ -9,7 +9,8 @@ export default async function Home() {
   if (session && session.user?.id && quiz) {
     const userQuiz = await getUsersQuiz(session.user.id, quiz.date)
     const user = await getUser(session.user.id)
-    return <QuizView topScores={topScores} session={session} quiz={quiz} user={user} userQuiz={userQuiz} />
+    const allScores = await getAllScores()
+    return <QuizView topScores={topScores} session={session} quiz={quiz} user={user} userQuiz={userQuiz} allScores={allScores} />
   } else {
     return <QuizView topScores={topScores} session={session} quiz={quiz} />
   }

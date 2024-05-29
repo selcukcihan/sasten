@@ -67,6 +67,31 @@ export const getTodaysQuiz = async () => {
   }
 }
 
+export const getAllScores = async (): Promise<LeaderBoardUser[]> => {
+  let lastEvaluatedKey = undefined
+  let allScores: LeaderBoardUser[] = []
+  do {
+    const response: any = await docClient.send(new QueryCommand({
+      TableName: process.env.DYNAMODB_TABLE_NAME || '',
+      IndexName: 'GSI1',
+      KeyConditionExpression: 'GSI1PK = :gsi1pk and begins_with(GSI1SK, :gsi1sk)',
+      ExpressionAttributeValues: {
+        ':gsi1pk': 'LEADER_BOARD',
+        ':gsi1sk': 'SCORE#',
+      },
+      ScanIndexForward: false,
+      ExclusiveStartKey: lastEvaluatedKey,
+    }))
+    allScores = allScores.concat((response.Items || []).map((item: any) => ({
+      score: item.score,
+      userId: item.pk.split('#')[1],
+      name: item.name,
+    })))
+    lastEvaluatedKey = response.LastEvaluatedKey
+  } while (lastEvaluatedKey)
+  return allScores
+}
+
 export const getTopScores = async (): Promise<LeaderBoardUser[]> => {
   const response = await docClient.send(new QueryCommand({
     TableName: process.env.DYNAMODB_TABLE_NAME || '',

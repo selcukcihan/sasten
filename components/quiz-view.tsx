@@ -53,6 +53,7 @@ export function QuizView(props: any) {
   const user = props.user as User | undefined
   const userQuiz = props.userQuiz as QuizSubmission | undefined
   const topScores = props.topScores as LeaderBoardUser[]
+  const allScores = props.allScores || [] as LeaderBoardUser[]
 
   return (
     <div className="flex flex-col h-screen">
@@ -103,7 +104,7 @@ export function QuizView(props: any) {
           </div>
         </div>
       </header>
-      <QuestionsView session={session} quiz={quiz} user={user} userQuiz={userQuiz} />
+      <QuestionsView session={session} quiz={quiz} user={user} userQuiz={userQuiz} allScores={allScores} />
       <footer className="bg-gray-900 text-white py-4 px-6">
         <div className="flex flex-col items-center gap-2">
           <div>
