@@ -24,6 +24,7 @@ import { signIn, signOut } from "../auth"
 import { LeaderBoardUser, Quiz, QuizSubmission, User } from '../core/db'
 import { QuestionsView } from "./questions-view"
 import Link from "next/link"
+import { ResultsDialog } from "./results-dialog"
 
 const getLeaderBoardRowClassName = (idx: number) => {
   const others = "text-white font-bold rounded-full w-8 h-8 flex items-center justify-center mr-2 "
@@ -37,6 +38,13 @@ const getLeaderBoardRowClassName = (idx: number) => {
     default:
       return others + " bg-gray-500"
   }
+}
+
+const EMAIL_MAX_LENGTH = 20
+
+const trimEmail = (email: string) => {
+  if (email.length <= EMAIL_MAX_LENGTH) return email
+  return email.slice(0, EMAIL_MAX_LENGTH) + '...'
 }
 
 export function QuizView(props: any) {
@@ -59,7 +67,8 @@ export function QuizView(props: any) {
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <div className="flex items-center space-x-2 cursor-pointer">
-                  <div className="text-gray-400">{user.email}</div>
+                  <div className="text-gray-400 hidden lg:block">{user.email}</div>
+                  <div className="text-gray-400 lg:hidden">{trimEmail(user.email)}</div>
                   <ChevronDownIcon className="h-4 w-4 text-gray-400" />
                 </div>
               </DropdownMenuTrigger>
@@ -115,6 +124,7 @@ export function QuizView(props: any) {
           <Link href={'https://github.com/selcukcihan/sasten'} target="#blank">Check out the project on GitHub</Link>
         </div>
       </footer>
+      <ResultsDialog userQuiz={userQuiz} />
     </div>
   )
 }
