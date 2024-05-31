@@ -43,8 +43,9 @@ export function Leaderboard(props: any) {
 
   if (showUserStats) {
     return (
-      <div className="flex flex-col gap-8">
+      <div className="flex flex-col gap-4">
         <UserStats {...props} />
+        <hr />
         <TopScores {...props} />
       </div>
     )
