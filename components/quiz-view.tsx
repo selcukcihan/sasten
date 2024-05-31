@@ -49,19 +49,3 @@ export function QuizView(props: any) {
     </div>
   )
 }
-
-/*
-    <div className="lg:flex lg:flex-col lg:h-screen">
-      <div className="min-h-screen flex flex-col lg:min-h-fit lg:flex-none">
-        <QuizHeader {...props} />
-        <QuestionsView session={session} quiz={quiz} user={user} userQuiz={userQuiz} allScores={allScores} />
-      </div>
-      <footer className="bg-gray-900 text-white py-4 px-6">
-        <Leaderboard topScores={topScores} allScores={allScores} user={user} showUserStats={true} />
-        <div className="text-xs text-gray-300 underline underline-offset-2 text-center lg:text-right">
-          <Link href={'https://github.com/selcukcihan/sasten'} target="#blank">Check out the project on GitHub</Link>
-        </div>
-      </footer>
-      <ResultsDialog userQuiz={userQuiz} topScores={topScores} user={user} allScores={allScores} />
-    </div>
-*/
