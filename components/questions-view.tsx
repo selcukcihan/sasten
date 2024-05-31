@@ -47,11 +47,11 @@ const getOptionClassName = (optionButtonState: OptionButtonState) => {
 }
 
 const getNavigationButtonClassName = (disabled: boolean) => {
-  const others = " rounded-lg py-3 px-6 transition-colors w-24"
+  const others = " bg-gray-200 dark:bg-gray-700 rounded-lg py-3 px-6 transition-colors w-28"
   if (!disabled) {
-    return "bg-gray-200 dark:bg-gray-700 dark:text-gray-200 lg:hover:bg-gray-300 dark:lg:hover:bg-gray-600" + others
+    return "text-black font-bold dark:text-gray-200 lg:hover:bg-gray-300 dark:lg:hover:bg-gray-600" + others
   } else {
-    return "bg-gray-100 dark:bg-gray-800 dark:text-gray-400" + others
+    return "text-gray-600 dark:text-gray-400" + others
   }
 }
 
@@ -107,6 +107,8 @@ export function QuestionsView(props: any) {
         <div className={`grid grid-cols-1 lg:grid-cols-2 gap-4 ${userQuiz ? 'pointer-events-none' : ''}`}>
           {quiz.questions[currentQuestion].options.map((answer, idx) => getOptionButton(answer, idx))}
         </div>
+      </div>
+      <div className="flex-1 flex flex-col mt-6 place-content-end gap-4 min-w-96 px-8">
         <div className="flex justify-between mt-6 font-light text-sm">
           <button
               onClick={() => {setCurrentQuestion(Math.max(0, currentQuestion - 1))}}
@@ -121,10 +123,8 @@ export function QuestionsView(props: any) {
             Next
           </button>
         </div>
-      </div>
-      <div className="flex flex-col mt-6">
         {!userQuiz &&
-        <div>
+        <div className="place-self-center min-w-full">
           <form ref={submitForm} action={async () => {
             setSubmitting(true)
             if (user) {
@@ -151,11 +151,11 @@ export function QuestionsView(props: any) {
 
 const SubmitButton = (props: any) => {
   const getSubmitButtonClassName = (disabled: boolean) => {
-    let others = " rounded-lg py-3 px-6 transition-colors w-72"
+    let others = " rounded-lg py-3 px-6 transition-colors min-w-full"
     if (!disabled) {
-      return "bg-gray-200 dark:bg-gray-900 dark:text-gray-200 lg:hover:bg-gray-300 dark:lg:hover:bg-gray-600" + others
+      return "bg-gray-200 dark:bg-gray-700 dark:text-gray-200 lg:hover:bg-gray-300 dark:lg:hover:bg-gray-600" + others
     } else {
-      return "bg-gray-300 dark:bg-gray-900 dark:text-gray-400" + others
+      return "bg-gray-200 dark:bg-gray-700 text-gray-600 dark:text-gray-400" + others
     }
   }
   const user = props.user as User | undefined
