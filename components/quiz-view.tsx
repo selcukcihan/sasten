@@ -25,20 +25,7 @@ import { LeaderBoardUser, Quiz, QuizSubmission, User } from '../core/db'
 import { QuestionsView } from "./questions-view"
 import Link from "next/link"
 import { ResultsDialog } from "./results-dialog"
-
-const getLeaderBoardRowClassName = (idx: number) => {
-  const others = "text-white font-bold rounded-full w-8 h-8 flex items-center justify-center mr-2 "
-  switch (idx) {
-    case 0:
-      return others + " bg-yellow-500"
-    case 1:
-      return others + " bg-yellow-700"
-    case 2:
-      return others + " bg-yellow-900"
-    default:
-      return others + " bg-gray-500"
-  }
-}
+import { Leaderboard } from "./leaderboard"
 
 const EMAIL_MAX_LENGTH = 20
 
@@ -106,26 +93,12 @@ export function QuizView(props: any) {
       </header>
       <QuestionsView session={session} quiz={quiz} user={user} userQuiz={userQuiz} allScores={allScores} />
       <footer className="bg-gray-900 text-white py-4 px-6">
-        <div className="flex flex-col items-center gap-2">
-          <div>
-            <h2 className="text-xl font-bold">Leaderboard</h2>
-          </div>
-          <div className="flex flex-col">
-            {topScores.map((user, idx) => (
-              <div key={idx} className="flex items-center mb-2">
-                <div className={getLeaderBoardRowClassName(idx)}>
-                  {idx + 1}
-                </div>
-                <div>{user.name}: {user.score}</div>
-              </div>
-            ))}
-          </div>
-        </div>
+        <Leaderboard topScores={topScores} />
         <div className="text-xs text-gray-300 underline underline-offset-2 text-center lg:text-right">
           <Link href={'https://github.com/selcukcihan/sasten'} target="#blank">Check out the project on GitHub</Link>
         </div>
       </footer>
-      <ResultsDialog userQuiz={userQuiz} />
+      <ResultsDialog userQuiz={userQuiz} topScores={topScores} />
     </div>
   )
 }

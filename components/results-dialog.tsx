@@ -5,6 +5,7 @@ import { QuizSubmission } from "../core/db"
 import { Button } from "./ui/button"
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "./ui/dialog"
 import Link from "next/link"
+import { Leaderboard } from "./leaderboard"
 
 const getOutcome = (userQuiz: QuizSubmission) => {
   if (!userQuiz) return
@@ -62,9 +63,9 @@ export function ResultsDialog(props: any) {
                 Share on Twitter
               </Button>
             </Link>
-            <Button variant="outline" onClick={() => setOpen(false)}>Close</Button>
           </div>
         </div>
+        <Leaderboard {...props} />
       </DialogContent>
     </Dialog>
   )
