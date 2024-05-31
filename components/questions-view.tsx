@@ -98,7 +98,7 @@ export function QuestionsView(props: any) {
 
   return (
     <main className={`flex-1 lg:bg-gray-100 dark:bg-gray-800 p-4 lg:p-8 flex flex-col items-center ${submitting ? 'pointer-events-none blur-sm' : ''}`}>
-      <div className="lg:bg-white lg:dark:bg-gray-900 lg:shadow-lg lg:rounded-lg w-full max-w-3xl p-4 py-2 lg:p-8">
+      <div className="lg:bg-white lg:dark:bg-gray-900 lg:shadow-lg lg:rounded-lg w-full max-w-3xl p-4 py-2 lg:p-8 flex-1">
         <div className="flex items-center justify-between mb-2 lg:mb-6">
           <div className="text-gray-500 dark:text-gray-400">Question {currentQuestion + 1} of {quiz.questions.length}</div>
           <div className="text-gray-500 dark:text-gray-400">{userQuiz ? `Score: ${userQuiz.score}` : ''}</div>
@@ -108,7 +108,7 @@ export function QuestionsView(props: any) {
           {quiz.questions[currentQuestion].options.map((answer, idx) => getOptionButton(answer, idx))}
         </div>
       </div>
-      <div className="flex-1 flex flex-col mt-6 place-content-end gap-4 min-w-96 px-8">
+      <div className="flex flex-col mt-6 place-content-end gap-4 min-w-96 px-8">
         <div className="flex justify-between mt-6 font-light text-sm">
           <button
               onClick={() => {setCurrentQuestion(Math.max(0, currentQuestion - 1))}}
