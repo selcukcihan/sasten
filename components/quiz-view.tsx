@@ -35,7 +35,7 @@ export function QuizView(props: any) {
 
   return (
     <div className="lg:flex lg:flex-col lg:h-screen">
-      <div className="flex flex-col lg:h-full min-h-screen lg:min-h-fit">
+      <div className="flex flex-col min-h-svh lg:min-h-fit lg:h-full">
         <QuizHeader {...props} />
         <QuestionsView session={session} quiz={quiz} user={user} userQuiz={userQuiz} allScores={allScores} />
       </div>
