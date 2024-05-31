@@ -13,13 +13,13 @@ export function UserStats(props: any) {
   }
 
   return (
-    <div className="dark:text-gray-100 px-8 lg:flex-1 pt-8 place-self-center">
+    <div className="dark:text-gray-100 flex flex-col items-center">
       <div className="w-36 flex flex-row">
         <span className="flex-1">Total score</span>
         <span>{user.score}</span>
       </div>
       <div className="w-36 flex flex-row">
-        <span className="flex-1">Games played</span>
+        <span className="flex-1">Games</span>
         <span>{user.gamesPlayed}</span>
       </div>
       <div className="w-36 flex flex-row">

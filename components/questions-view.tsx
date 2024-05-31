@@ -20,12 +20,10 @@ To read more about using these font, please visit the Next.js documentation:
 - Pages Directory: https://nextjs.org/docs/pages/building-your-application/optimizing/fonts
 **/
 
-import { Session } from "next-auth"
-import { LeaderBoardUser, Quiz, QuizSubmission, User } from '../core/db'
+import { Quiz, QuizSubmission, User } from '../core/db'
 import { useState, useEffect, useRef } from "react"
 import { submitQuiz, submitSignIn } from "../app/actions"
 import { useFormStatus } from "react-dom"
-import { UserStats } from "./user-stats"
 
 enum OptionButtonState {
   Unanswered,
@@ -59,20 +57,13 @@ const getNavigationButtonClassName = (disabled: boolean) => {
 
 export function QuestionsView(props: any) {
   const submitForm = useRef(null)
-  const session = props.session as (Session | null)
   const quiz = props.quiz as Quiz
-  const allScores = props.allScores as LeaderBoardUser[]
   const storageKey = `answers-${quiz.date}`
   const user = props.user as User | undefined
   const userQuiz = props.userQuiz as QuizSubmission | undefined
   const [currentQuestion, setCurrentQuestion] = useState(0)
   const [answers, setAnswers] = useState(userQuiz?.answers || quiz.questions.map(() => -1))
   const [submitting, setSubmitting] = useState(false)
-
-  const getUsersRanking = () => {
-    if (!user) return 0
-    return allScores.sort((a, b) => b.score - a.score).findIndex(u => u.userId === user.id) + 1
-  }
 
   useEffect(() => {
     const storedAnswers = JSON.parse(localStorage.getItem(storageKey) || 'null') as number[] | null
@@ -153,7 +144,6 @@ export function QuestionsView(props: any) {
           </form>
         </div>
         }
-        <UserStats user={user} allScores={allScores} />
       </div>
     </main>
   )

@@ -1,4 +1,5 @@
 import { LeaderBoardUser } from "../core/db"
+import { UserStats } from "./user-stats"
 
 const getLeaderBoardRowClassName = (idx: number) => {
   const others = "text-white font-bold rounded-full w-8 h-8 flex items-center justify-center mr-2 "
@@ -14,7 +15,7 @@ const getLeaderBoardRowClassName = (idx: number) => {
   }
 }
 
-export function Leaderboard(props: any) {
+function TopScores(props: any) {
   const topScores = (props.topScores || []) as LeaderBoardUser[]
 
   return (
@@ -34,4 +35,22 @@ export function Leaderboard(props: any) {
       </div>
     </div>
   )
+}
+
+export function Leaderboard(props: any) {
+  const topScores = (props.topScores || []) as LeaderBoardUser[]
+  const showUserStats = !!props.showUserStats
+
+  if (showUserStats) {
+    return (
+      <div className="flex flex-col gap-8">
+        <UserStats {...props} />
+        <TopScores {...props} />
+      </div>
+    )
+  } else {
+    return (
+      <TopScores {...props} />
+    )
+  }
 }
