@@ -38,14 +38,13 @@ function TopScores(props: any) {
 }
 
 export function Leaderboard(props: any) {
-  const topScores = (props.topScores || []) as LeaderBoardUser[]
   const showUserStats = !!props.showUserStats
 
   if (showUserStats) {
     return (
       <div className="flex flex-col gap-4">
         <UserStats {...props} />
-        <hr />
+        {props.user && <hr/>}
         <TopScores {...props} />
       </div>
     )
