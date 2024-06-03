@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button"
 import { DropdownMenuTrigger, DropdownMenuItem, DropdownMenuContent, DropdownMenu, DropdownMenuSeparator, DropdownMenuLabel } from "@/components/ui/dropdown-menu"
 import { signIn, signOut } from "../auth"
-import { QuizSubmission, User } from '../core/db'
+import { Quiz, QuizSubmission, User } from '../core/db'
 import Link from "next/link"
 
 const EMAIL_MAX_LENGTH = 20
@@ -11,8 +11,13 @@ const trimEmail = (email: string) => {
   return email.slice(0, EMAIL_MAX_LENGTH) + '...'
 }
 
+const getMenuItemClassName = (isActive: boolean) => {
+  return isActive ? 'font-bold' : ''
+}
+
 export function QuizHeader(props: any) {
   const user = props.user as User | undefined
+  const quiz = props.quiz as Quiz | undefined
   const userQuizzes = (props.userQuizzes || []) as QuizSubmission[]
 
   return (
@@ -46,15 +51,15 @@ export function QuizHeader(props: any) {
                   </Button>
                 </form>
               </DropdownMenuItem>
-              {userQuizzes.length && (<>
+              {userQuizzes.length ? (<>
                 <DropdownMenuSeparator />
                 <DropdownMenuLabel>Previous Quizzes</DropdownMenuLabel>
-                {userQuizzes.slice(0, 5).map((quiz, idx) => (
-                  <DropdownMenuItem key={idx}>
-                    <Link href={`?display=${quiz.date}`}>{quiz.date}</Link>
+                {userQuizzes.slice(0, 5).map((q, idx) => (
+                  <DropdownMenuItem className={getMenuItemClassName(q.date === quiz?.date)} key={idx}>
+                    <Link href={`?display=${q.date}`}>{q.date}</Link>
                   </DropdownMenuItem>
                 ))}
-              </>)}
+              </>) : null}
             </DropdownMenuContent>
           </DropdownMenu>) : (
           <form

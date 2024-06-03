@@ -1,7 +1,8 @@
 import { auth } from "@/auth"
 import { QuizView } from "../components/quiz-view"
-import { getTodaysQuiz, getUsersQuiz, getQuiz, getUser, getTopScores, getAllScores, getUserQuizzes } from "../core/db"
+import { getTodaysQuiz, getUsersQuiz, getQuiz, getUser, getTopScores, getAllScores, getUserQuizzes, Quiz } from "../core/db"
 import { notFound } from 'next/navigation'
+import { getToday } from "../core/date";
 
 export default async function Home({
   searchParams,
@@ -15,7 +16,15 @@ export default async function Home({
       return <QuizView session={session} quiz={quiz} />
     }
   }
-  const quiz = searchParams?.["display"] && session?.user ? await getQuiz(searchParams["display"] as string) : await getTodaysQuiz()
+  let quiz: Quiz | null = null
+  let displayingTodaysQuiz = true
+  const displayDate = searchParams?.["display"] as string | undefined
+  if (displayDate && session?.user && displayDate < getToday()) {
+    quiz = await getQuiz(displayDate)
+    displayingTodaysQuiz = false
+  } else {
+    quiz = await getTodaysQuiz()
+  }
   if (!quiz) {
     return notFound()
   }
@@ -27,6 +36,9 @@ export default async function Home({
       getAllScores(),
       getUserQuizzes(session.user.id),
     ])
+    if (!displayingTodaysQuiz && !userQuizzes.find(q => q.date === quiz.date)) {
+      return notFound()
+    }
     return <QuizView {...{ session, quiz, user, userQuiz, topScores, allScores, userQuizzes }} />
   } else {
     return <QuizView {...{ session, quiz, topScores }} />

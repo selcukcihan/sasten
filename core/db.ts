@@ -4,6 +4,7 @@ import { DynamoDBDocumentClient, GetCommand, QueryCommand, PutCommand, UpdateCom
 import { LEADER_BOARD_NUMBER_OF_USERS } from "./constants"
 import sampleData from './data.json'
 import { User as AuthUser } from 'next-auth'
+import { getToday } from "./date"
 
 const client = new DynamoDBClient({})
 const docClient = DynamoDBDocumentClient.from(client)
@@ -39,7 +40,7 @@ export interface LeaderBoardUser {
 }
 
 export const getDefaultQuiz = (date?: string): Quiz => ({
-  date: date || new Date().toISOString().split('T')[0],
+  date: date || getToday(),
   questions: sampleData,
 })
 
@@ -57,7 +58,7 @@ export const getQuiz = async (date: string) => {
 }
 
 export const getTodaysQuiz = async () => {
-  const today = new Date().toISOString().split('T')[0]
+  const today = getToday()
   if (todaysQuiz && todaysQuiz.date === today) {
     return todaysQuiz
   }
