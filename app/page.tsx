@@ -29,6 +29,6 @@ export default async function Home({
     ])
     return <QuizView {...{ session, quiz, user, userQuiz, topScores, allScores, userQuizzes }} />
   } else {
-    return <QuizView topScores={topScores} session={session} quiz={quiz} />
+    return <QuizView {...{ session, quiz, topScores }} />
   }
 }

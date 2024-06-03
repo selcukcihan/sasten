@@ -17,8 +17,6 @@ To read more about using these font, please visit the Next.js documentation:
 - App Directory: https://nextjs.org/docs/app/building-your-application/optimizing/fonts
 - Pages Directory: https://nextjs.org/docs/pages/building-your-application/optimizing/fonts
 **/
-import { Session } from "next-auth"
-import { LeaderBoardUser, Quiz, QuizSubmission, User } from '../core/db'
 import { QuestionsView } from "./questions-view"
 import Link from "next/link"
 import { ResultsDialog } from "./results-dialog"
@@ -26,26 +24,19 @@ import { Leaderboard } from "./leaderboard"
 import { QuizHeader } from "./quiz-header"
 
 export function QuizView(props: any) {
-  const session = props.session as (Session | null)
-  const quiz = props.quiz as Quiz
-  const user = props.user as User | undefined
-  const userQuiz = props.userQuiz as QuizSubmission | undefined
-  const topScores = (props.topScores || []) as LeaderBoardUser[]
-  const allScores = (props.allScores || []) as LeaderBoardUser[]
-
   return (
     <div className="lg:flex lg:flex-col lg:h-screen">
       <div className="flex flex-col min-h-svh lg:min-h-fit lg:h-full">
         <QuizHeader {...props} />
-        <QuestionsView session={session} quiz={quiz} user={user} userQuiz={userQuiz} allScores={allScores} />
+        <QuestionsView {...props} />
       </div>
       <footer className="bg-gray-900 text-white py-4 px-6">
-        <Leaderboard topScores={topScores} allScores={allScores} user={user} showUserStats={true} />
+        <Leaderboard {...props} showUserStats={true} />
         <div className="text-xs text-gray-300 underline underline-offset-2 text-center lg:text-right">
           <Link href={'https://github.com/selcukcihan/sasten'} target="#blank">Check out the project on GitHub</Link>
         </div>
       </footer>
-      <ResultsDialog userQuiz={userQuiz} topScores={topScores} user={user} allScores={allScores} />
+      <ResultsDialog {...props} />
     </div>
   )
 }
