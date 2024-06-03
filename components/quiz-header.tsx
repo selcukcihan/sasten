@@ -23,10 +23,12 @@ export function QuizHeader(props: any) {
   return (
     <header className="bg-gray-900 text-white py-2 px-6">
       <div className="container mx-auto flex flex-row justify-between items-center">
-        <div className="flex flex-row items-center gap-2">
-          <LogoIcon className="fill-white" />
-          <h1 className="text-xl lg:text-2xl font-bold text-center">Dev Quiz</h1>
-        </div>
+        <Link href='/'>
+          <div className="flex flex-row items-center gap-2">
+            <LogoIcon className="fill-white" />
+            <h1 className="text-xl lg:text-2xl font-bold text-center">Dev Quiz</h1>
+          </div>
+        </Link>
         <div className="flex flex-col text-sm lg:text-lg gap-4">
           {user ? (
           <DropdownMenu>
@@ -55,7 +57,7 @@ export function QuizHeader(props: any) {
                 <DropdownMenuSeparator />
                 <DropdownMenuLabel>Previous Quizzes</DropdownMenuLabel>
                 {userQuizzes.slice(0, 5).map((q, idx) => (
-                  <DropdownMenuItem className={getMenuItemClassName(q.date === quiz?.date)} key={idx}>
+                  <DropdownMenuItem asChild className={getMenuItemClassName(q.date === quiz?.date)} key={idx}>
                     <Link href={`?display=${q.date}`}>{q.date}</Link>
                   </DropdownMenuItem>
                 ))}
