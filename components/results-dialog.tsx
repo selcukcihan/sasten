@@ -36,13 +36,14 @@ export function ResultsDialog(props: any) {
   const [open, setOpen] = useState(false)
   const [shown, setShown] = useState(false)
   const outcome = userQuiz ? getOutcome(userQuiz) : ''
+  const displayingTodaysQuiz = props.displayingTodaysQuiz !== false
 
   useEffect(() => {
-    if (userQuiz && !shown) {
+    if (userQuiz && !shown && displayingTodaysQuiz) {
       setOpen(true)
       setShown(true)
     }
-  }, [userQuiz, shown])
+  }, [userQuiz, shown, displayingTodaysQuiz])
 
   return (
     <Dialog {...props} open={open} onOpenChange={setOpen}>
