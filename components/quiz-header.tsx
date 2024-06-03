@@ -1,7 +1,8 @@
 import { Button } from "@/components/ui/button"
-import { DropdownMenuTrigger, DropdownMenuItem, DropdownMenuContent, DropdownMenu } from "@/components/ui/dropdown-menu"
+import { DropdownMenuTrigger, DropdownMenuItem, DropdownMenuContent, DropdownMenu, DropdownMenuSeparator, DropdownMenuLabel } from "@/components/ui/dropdown-menu"
 import { signIn, signOut } from "../auth"
-import { User } from '../core/db'
+import { QuizSubmission, User } from '../core/db'
+import Link from "next/link"
 
 const EMAIL_MAX_LENGTH = 20
 
@@ -12,6 +13,7 @@ const trimEmail = (email: string) => {
 
 export function QuizHeader(props: any) {
   const user = props.user as User | undefined
+  const userQuizzes = (props.userQuizzes || []) as QuizSubmission[]
 
   return (
     <header className="bg-gray-900 text-white py-2 px-6">
@@ -44,6 +46,15 @@ export function QuizHeader(props: any) {
                   </Button>
                 </form>
               </DropdownMenuItem>
+              {userQuizzes.length && (<>
+                <DropdownMenuSeparator />
+                <DropdownMenuLabel>Previous Quizzes</DropdownMenuLabel>
+                {userQuizzes.slice(0, 5).map((quiz, idx) => (
+                  <DropdownMenuItem key={idx}>
+                    <Link href={`?display=${quiz.date}`}>{quiz.date}</Link>
+                  </DropdownMenuItem>
+                ))}
+              </>)}
             </DropdownMenuContent>
           </DropdownMenu>) : (
           <form

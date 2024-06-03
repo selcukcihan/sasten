@@ -99,8 +99,9 @@ export function QuestionsView(props: any) {
   return (
     <main className={`flex-1 lg:bg-gray-100 dark:bg-gray-800 p-4 lg:p-8 flex flex-col items-center ${submitting ? 'pointer-events-none blur-sm' : ''}`}>
       <div className="lg:bg-white lg:dark:bg-gray-900 lg:shadow-lg lg:rounded-lg w-full max-w-3xl p-4 py-2 lg:p-8 flex-1">
-        <div className="flex items-center justify-between mb-2 lg:mb-6">
+        <div className="grid grid-cols-3 justify-items-center mb-2 lg:mb-6">
           <div className="text-gray-500 dark:text-gray-400">Question {currentQuestion + 1} of {quiz.questions.length}</div>
+          <div className="text-gray-500 dark:text-gray-400">{quiz.date}</div>
           <div className="text-gray-500 dark:text-gray-400">{userQuiz ? `Score: ${userQuiz.score}` : ''}</div>
         </div>
         <h2 className="text-2xl font-bold mb-4 dark:text-gray-100">{quiz.questions[currentQuestion].question}</h2>

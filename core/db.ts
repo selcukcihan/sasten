@@ -235,7 +235,11 @@ export const getUsersQuiz = async (userId: string, date: string): Promise<QuizSu
       sk: `QUIZ#${date}`,
     },
   }))
-  return response.Item as QuizSubmission
+  return response.Item ? {
+    date,
+    answers: response.Item.answers,
+    score: response.Item.score,
+  } : null
 }
 
 const isAuthUserRecord = (userId: string, item: any): boolean => {
@@ -275,4 +279,21 @@ export const getUser = async (userId: string): Promise<User | null> => {
   } else {
     return null
   }
+}
+
+export const getUserQuizzes = async (userId: string): Promise<QuizSubmission[]> => {
+  const response = await docClient.send(new QueryCommand({
+    TableName: process.env.DYNAMODB_TABLE_NAME || '',
+    KeyConditionExpression: 'pk = :pk and begins_with(sk, :sk)',
+    ExpressionAttributeValues: {
+      ':pk': `USER#${userId}`,
+      ':sk': 'QUIZ#',
+    },
+    ScanIndexForward: false,
+  }))
+  return (response.Items || []).map((item) => ({
+    date: item.sk.split('#')[1],
+    answers: item.answers,
+    score: item.score,
+  }))
 }

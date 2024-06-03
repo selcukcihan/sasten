@@ -1,6 +1,7 @@
 import { auth } from "@/auth"
 import { QuizView } from "../components/quiz-view"
-import { getTodaysQuiz, getUsersQuiz, getQuiz, getUser, getTopScores, getAllScores } from "../core/db"
+import { getTodaysQuiz, getUsersQuiz, getQuiz, getUser, getTopScores, getAllScores, getUserQuizzes } from "../core/db"
+import { notFound } from 'next/navigation'
 
 export default async function Home({
   searchParams,
@@ -14,13 +15,19 @@ export default async function Home({
       return <QuizView session={session} quiz={quiz} />
     }
   }
-  const quiz = await getTodaysQuiz()
+  const quiz = searchParams?.["display"] && session?.user ? await getQuiz(searchParams["display"] as string) : await getTodaysQuiz()
+  if (!quiz) {
+    return notFound()
+  }
   const topScores = await getTopScores()
   if (session && session.user?.id && quiz) {
-    const userQuiz = await getUsersQuiz(session.user.id, quiz.date)
-    const user = await getUser(session.user.id)
-    const allScores = await getAllScores()
-    return <QuizView topScores={topScores} session={session} quiz={quiz} user={user} userQuiz={userQuiz} allScores={allScores} />
+    const [userQuiz, user, allScores, userQuizzes] = await Promise.all([
+      getUsersQuiz(session.user.id, quiz.date),
+      getUser(session.user.id),
+      getAllScores(),
+      getUserQuizzes(session.user.id),
+    ])
+    return <QuizView {...{ session, quiz, user, userQuiz, topScores, allScores, userQuizzes }} />
   } else {
     return <QuizView topScores={topScores} session={session} quiz={quiz} />
   }
