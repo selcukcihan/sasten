@@ -22,13 +22,13 @@ import Link from "next/link"
 import { ResultsDialog } from "./results-dialog"
 import { Leaderboard } from "./leaderboard"
 import { QuizHeader } from "./quiz-header"
+import Loadable from "./loadable"
 
 export function QuizView(props: any) {
   return (
     <div className="lg:flex lg:flex-col lg:h-screen">
       <div className="flex flex-col min-h-svh lg:min-h-fit lg:h-full">
-        <QuizHeader {...props} />
-        <QuestionsView {...props} />
+        <Loadable {...props} />
       </div>
       <footer className="bg-gray-900 text-white py-4 px-6">
         <Leaderboard {...props} showUserStats={true} />

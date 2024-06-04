@@ -2,7 +2,7 @@
 
 import { redirect } from 'next/navigation'
 import { auth } from '@/auth'
-import { signIn } from "../auth"
+import { signIn, signOut } from "../auth"
 import { completeQuiz, Quiz } from '../core/db';
 
 export async function submitQuiz(quiz: Quiz, answers: number[], currentTotalScore: number) {
@@ -15,4 +15,8 @@ export async function submitQuiz(quiz: Quiz, answers: number[], currentTotalScor
 
 export async function submitSignIn() {
   await signIn("google")
+}
+
+export async function submitSignOut() {
+  await signOut()
 }

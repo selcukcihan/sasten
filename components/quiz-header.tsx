@@ -1,8 +1,10 @@
+'use client'
+
 import { Button } from "@/components/ui/button"
 import { DropdownMenuTrigger, DropdownMenuItem, DropdownMenuContent, DropdownMenu, DropdownMenuSeparator, DropdownMenuLabel } from "@/components/ui/dropdown-menu"
-import { signIn, signOut } from "../auth"
 import { Quiz, QuizSubmission, User } from '../core/db'
 import Link from "next/link"
+import { submitSignOut, submitSignIn } from "../app/actions"
 
 const EMAIL_MAX_LENGTH = 20
 
@@ -43,8 +45,7 @@ export function QuizHeader(props: any) {
               <DropdownMenuItem>
                 <form
                   action={async () => {
-                    "use server"
-                    await signOut()
+                    await submitSignOut()
                   }}
                 >
                   <Button size="sm" variant="outline" type="submit">
@@ -66,8 +67,7 @@ export function QuizHeader(props: any) {
           </DropdownMenu>) : (
           <form
             action={async () => {
-              "use server"
-              await signIn("google")
+              await submitSignIn()
             }}
           >
             <Button size="sm" type="submit" variant="secondary" className="lg:text-base lg:font-semibold">
