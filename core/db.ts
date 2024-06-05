@@ -117,8 +117,12 @@ export const getTopScores = async (): Promise<LeaderBoardUser[]> => {
   }))
 }
 
-export const completeQuiz = async (user: AuthUser, date: string, answers: number[], score: number, currentTotalScore: number) => {
+export const completeQuiz = async (user: AuthUser, date: string, answers: number[], score: number) => {
   console.log(`${user.id} completing quiz for ${date}`)
+  const _user = await getUser(user.id || '')
+  if (!_user) {
+    throw new Error(`User ${user.id} not found`)
+  }
   await docClient.send(new TransactWriteItemsCommand({
     TransactItems: [
       {
@@ -173,7 +177,7 @@ export const completeQuiz = async (user: AuthUser, date: string, answers: number
               S: `LEADER_BOARD`,
             },
             ':gsi1sk': {
-              S: `SCORE#${(currentTotalScore + score).toString().padStart(10, '0')}#${user.id}`,
+              S: `SCORE#${(_user.score + score).toString().padStart(10, '0')}#${user.id}`,
             },
             ':email': {
               S: user.email || '',

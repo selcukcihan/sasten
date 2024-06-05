@@ -139,13 +139,7 @@ export function QuestionsView(props: any) {
             {!!user &&
             <form ref={submitForm} action={async () => {
               setSubmitting(true)
-              const _userQuiz = await submitQuiz(quiz, answers, user?.score || 0)
-              // const storedAnswers = JSON.parse(localStorage.getItem(storageKey) || 'null') as number[] | null
-              // await submitQuiz(quiz, storedAnswers || answers, user?.score || 0)
-              // if (storedAnswers) {
-              //   localStorage.removeItem(storageKey)
-              //   setAnswers(storedAnswers)
-              // }
+              const _userQuiz = await submitQuiz(quiz, answers)
               setSubmitting(false)
               if (_userQuiz) {
                 setUserQuiz(_userQuiz)
