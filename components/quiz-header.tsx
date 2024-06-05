@@ -2,7 +2,7 @@
 
 import { Button } from "@/components/ui/button"
 import { DropdownMenuTrigger, DropdownMenuItem, DropdownMenuContent, DropdownMenu, DropdownMenuSeparator, DropdownMenuLabel } from "@/components/ui/dropdown-menu"
-import { Quiz, QuizSubmission, User } from '../core/db'
+import { QuizSubmission, User } from '../core/db'
 import Link from "next/link"
 import { submitSignOut, submitSignIn } from "../app/actions"
 import { getToday } from "../core/date"

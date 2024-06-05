@@ -5,12 +5,16 @@ import { auth } from '@/auth'
 import { signIn, signOut } from "../auth"
 import { completeQuiz, getQuiz, Quiz, getUsersQuiz, getTodaysQuiz } from '../core/db';
 import { getToday } from '../core/date';
+import { revalidatePath } from 'next/cache';
 
 export async function submitQuiz(quiz: Quiz, answers: number[], currentTotalScore: number) {
+  if (answers.length !== quiz.questions.length) {
+    throw new Error('Invalid number of answers')
+  }
   const session = await auth()
   if (session?.user?.id) {
     await completeQuiz(session.user, quiz.date, answers, answers.filter((ans, idx) => ans === quiz.questions[idx].answer).length, currentTotalScore)
-    redirect('/')
+    return await getUsersQuiz(session.user.id, quiz.date)
   }
 }
 

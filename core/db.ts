@@ -1,6 +1,6 @@
 
 import { DynamoDBClient, TransactWriteItemsCommand } from "@aws-sdk/client-dynamodb"
-import { DynamoDBDocumentClient, GetCommand, QueryCommand, PutCommand, UpdateCommand, BatchGetCommand } from "@aws-sdk/lib-dynamodb"
+import { DynamoDBDocumentClient, GetCommand, QueryCommand, BatchGetCommand } from "@aws-sdk/lib-dynamodb"
 import { LEADER_BOARD_NUMBER_OF_USERS } from "./constants"
 import sampleData from './data.json'
 import { User as AuthUser } from 'next-auth'
@@ -118,6 +118,7 @@ export const getTopScores = async (): Promise<LeaderBoardUser[]> => {
 }
 
 export const completeQuiz = async (user: AuthUser, date: string, answers: number[], score: number, currentTotalScore: number) => {
+  console.log(`${user.id} completing quiz for ${date}`)
   await docClient.send(new TransactWriteItemsCommand({
     TransactItems: [
       {
@@ -185,47 +186,6 @@ export const completeQuiz = async (user: AuthUser, date: string, answers: number
       },
     ],
   }))
-}
-
-export const completeQuizWithoutTransactionUnsafe = async (user: AuthUser, date: string, answers: number[], score: number, currentTotalScore: number) => {
-  const incrementUsersScore = async (score: number, currentTotalScore: number) => {
-    const command = new UpdateCommand({
-      TableName: process.env.DYNAMODB_TABLE_NAME || '',
-      Key: {
-        pk: `USER#${user.id}`,
-        sk: `QUIZ_USER#${user.id}`,
-      },
-      ExpressionAttributeNames: {
-        '#userName': 'name',
-      },
-      UpdateExpression: 'ADD score :score, gamesPlayed :gamesPlayed  SET GSI1PK = :gsi1pk, GSI1SK = :gsi1sk, email = :email, #userName = :userName',
-      ExpressionAttributeValues: {
-        ':score': score,
-        ':gamesPlayed': 1,
-        ':gsi1pk': `LEADER_BOARD`,
-        ':gsi1sk': `SCORE#${(currentTotalScore + score).toString().padStart(10, '0')}#${user.id}`,
-        ':email': user.email || '',
-        ':userName': user.name || '',
-      },
-    })
-
-    await docClient.send(command)
-  }
-
-  const command = new PutCommand({
-    TableName: process.env.DYNAMODB_TABLE_NAME || '',
-    Item: {
-      pk: `USER#${user.id}`,
-      sk: `QUIZ#${date}`,
-      answers,
-      score,
-      gsi1pk: `SUBMISSION#${date}`,
-      gsi1sk: `USER#${user.id}`,
-    },
-  })
-
-  // Also increment user's score in the main record
-  await Promise.all([docClient.send(command), incrementUsersScore(score, currentTotalScore)])
 }
 
 export const getUsersQuiz = async (userId: string, date: string): Promise<QuizSubmission | null> => {

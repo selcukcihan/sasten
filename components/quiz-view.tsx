@@ -31,7 +31,7 @@ export default function QuizView(props: any) {
   return (
     <>
       <QuizHeader {...props} {...{ loading, setLoading, date, setDate }} />
-      <QuestionsView {...props} {...{ quiz, userQuiz, loading, setLoading, date, setDate }}/>
+      <QuestionsView {...props} {...{ quiz, userQuiz, setUserQuiz, loading, setLoading, date, setDate }}/>
       <LoadingView loading={loading} date={date} />
     </>
   )

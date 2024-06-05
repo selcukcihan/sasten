@@ -61,19 +61,25 @@ export function QuestionsView(props: any) {
   const submitForm = useRef(null)
   const loading = props.loading as boolean
   const storageKey = `answers-${quiz.date}`
+  const userQuiz = props.userQuiz as QuizSubmission | null
+  const setUserQuiz = props.setUserQuiz as any
   const user = props.user as User | undefined
-  const userQuiz = props.userQuiz as QuizSubmission | undefined
   const [currentQuestion, setCurrentQuestion] = useState(0)
   const [answers, setAnswers] = useState(userQuiz?.answers || quiz.questions.map(() => -1))
   const [submitting, setSubmitting] = useState(false)
 
   useEffect(() => {
     const storedAnswers = JSON.parse(localStorage.getItem(storageKey) || 'null') as number[] | null
-    if (storedAnswers && !userQuiz && user) {
-      setSubmitting(true)
-      ;(submitForm.current as any)?.requestSubmit()
+    if (user && !userQuiz && storedAnswers) {
+      if (answers.join() !== storedAnswers.join()) {
+        setAnswers(storedAnswers)
+      } else {
+        localStorage.removeItem(storageKey)
+        setSubmitting(true)
+        ;(submitForm.current as any)?.requestSubmit()
+      }
     }
-  }, [userQuiz, user, quiz, storageKey])
+  }, [answers, storageKey, user, userQuiz])
 
   const getOptionButton = (answer: string, optionIndex: number) => {
     let optionButtonState = OptionButtonState.Unanswered
@@ -129,23 +135,30 @@ export function QuestionsView(props: any) {
           </div>
           {!userQuiz &&
           <div className="place-self-center min-w-full">
+            {!!user &&
             <form ref={submitForm} action={async () => {
               setSubmitting(true)
-              if (user) {
-                const storedAnswers = JSON.parse(localStorage.getItem(storageKey) || 'null') as number[] | null
-                if (storedAnswers) {
-                  setAnswers(storedAnswers)
-                  localStorage.removeItem(storageKey)
-                }
-                await submitQuiz(quiz, storedAnswers || answers, user?.score || 0)
-              } else {
-                localStorage.setItem(storageKey, JSON.stringify(answers))
-                await submitSignIn()
-              }
+              const _userQuiz = await submitQuiz(quiz, answers, user?.score || 0)
+              // const storedAnswers = JSON.parse(localStorage.getItem(storageKey) || 'null') as number[] | null
+              // await submitQuiz(quiz, storedAnswers || answers, user?.score || 0)
+              // if (storedAnswers) {
+              //   localStorage.removeItem(storageKey)
+              //   setAnswers(storedAnswers)
+              // }
               setSubmitting(false)
+              if (_userQuiz) {
+                setUserQuiz(_userQuiz)
+              }
             }}>
-              <SubmitButton {...props} user={user} answers={answers} setSubmitting={setSubmitting} submitting={submitting} />
-            </form>
+              <SubmitButton {...props} {...{ user, answers, setSubmitting }} />
+            </form>}
+            {!user &&
+            <form ref={submitForm} action={async () => {
+              localStorage.setItem(storageKey, JSON.stringify(answers))
+              await submitSignIn()
+            }}>
+              <SignInToSubmitButton {...props} {...{ answers }} />
+            </form>}
           </div>
           }
         </div>
@@ -155,23 +168,22 @@ export function QuestionsView(props: any) {
   )
 }
 
-const SubmitButton = (props: any) => {
-  const getSubmitButtonClassName = (disabled: boolean) => {
-    let others = " rounded-lg py-3 px-6 transition-colors min-w-full"
-    if (!disabled) {
-      return "bg-gray-200 dark:bg-gray-700 dark:text-gray-200 lg:hover:bg-gray-300 dark:lg:hover:bg-gray-600" + others
-    } else {
-      return "bg-gray-200 dark:bg-gray-700 text-gray-600 dark:text-gray-400" + others
-    }
+const getSubmitButtonClassName = (disabled: boolean) => {
+  let others = " rounded-lg py-3 px-6 transition-colors min-w-full"
+  if (!disabled) {
+    return "bg-gray-200 dark:bg-gray-700 dark:text-gray-200 lg:hover:bg-gray-300 dark:lg:hover:bg-gray-600" + others
+  } else {
+    return "bg-gray-200 dark:bg-gray-700 text-gray-600 dark:text-gray-400" + others
   }
-  const user = props.user as User | undefined
+}
+
+const SubmitButton = (props: any) => {
   const answers = props.answers as number[]
+  const setSubmitting = props.setSubmitting as any
 
   let text = ''
   if (answers.includes(-1)) {
     text = 'Complete the quiz to submit'
-  } else if (!user) {
-    text = 'Sign in to submit the quiz'
   } else {
     text = 'Submit your answers'
   }
@@ -182,7 +194,29 @@ const SubmitButton = (props: any) => {
   return (
     <button
       disabled={disabled}
-      onClick={() => props.setSubmitting(true)}
+      onClick={() => setSubmitting(true)}
+      className={getSubmitButtonClassName(disabled)}>
+      {text}
+    </button>
+  )
+}
+
+const SignInToSubmitButton = (props: any) => {
+  const answers = props.answers as number[]
+
+  let text = ''
+  if (answers.includes(-1)) {
+    text = 'Complete the quiz to submit'
+  } else {
+    text = 'Sign in and submit the quiz'
+  }
+
+  const { pending } = useFormStatus()
+  const disabled = pending || answers.includes(-1)
+
+  return (
+    <button
+      disabled={disabled}
       className={getSubmitButtonClassName(disabled)}>
       {text}
     </button>
