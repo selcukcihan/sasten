@@ -17,10 +17,11 @@ export default async function Home(props: any) {
       getTodaysQuiz(),
       getUsersQuiz(session.user.id, getToday()),
     ])
-    return <MainView {...props} {...{ session, user, topScores, allScores, userQuizzes, quiz, userQuiz }} />
+    let previousQuizzes = userQuizzes.filter(q => q.date !== quiz.date)
+    return <MainView {...props} {...{ session, user, topScores, allScores, userQuizzes: previousQuizzes, quiz, userQuiz }} />
   } else {
-    const topScores = await getTopScores()
-    return <MainView {...props} {...{ session, topScores }} />
+    const [topScores, quiz] = await Promise.all([getTopScores(), getTodaysQuiz()])
+    return <MainView {...props} {...{ session, topScores, quiz }} />
   }
 }
 
