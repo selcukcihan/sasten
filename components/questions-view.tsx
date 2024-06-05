@@ -56,8 +56,9 @@ const getNavigationButtonClassName = (disabled: boolean) => {
 }
 
 export function QuestionsView(props: any) {
-  const submitForm = useRef(null)
   const quiz = props.quiz as Quiz
+  const submitForm = useRef(null)
+  
   const storageKey = `answers-${quiz.date}`
   const user = props.user as User | undefined
   const userQuiz = props.userQuiz as QuizSubmission | undefined

@@ -5,6 +5,7 @@ import { DropdownMenuTrigger, DropdownMenuItem, DropdownMenuContent, DropdownMen
 import { Quiz, QuizSubmission, User } from '../core/db'
 import Link from "next/link"
 import { submitSignOut, submitSignIn } from "../app/actions"
+import { getToday } from "../core/date"
 
 const EMAIL_MAX_LENGTH = 20
 
@@ -19,13 +20,14 @@ const getMenuItemClassName = (isActive: boolean) => {
 
 export function QuizHeader(props: any) {
   const user = props.user as User | undefined
-  const quiz = props.quiz as Quiz | undefined
   const userQuizzes = (props.userQuizzes || []) as QuizSubmission[]
+  const date = props.date as string
+  const setDate = props.setDate as (date: string) => void
 
   return (
     <header className="bg-gray-900 text-white py-2 px-6">
       <div className="container mx-auto flex flex-row justify-between items-center">
-        <Link href='/'>
+        <Link href='/' onClick={() => setDate(getToday())}>
           <div className="flex flex-row items-center gap-2">
             <LogoIcon className="fill-white" />
             <h1 className="text-xl lg:text-2xl font-bold text-center">Dev Quiz</h1>
@@ -56,10 +58,18 @@ export function QuizHeader(props: any) {
               </DropdownMenuItem>
               {userQuizzes.length ? (<>
                 <DropdownMenuSeparator />
+                {date < getToday() && (
+                <>
+                  <DropdownMenuItem asChild>
+                    <span className="cursor-pointer" onClick={() => setDate(getToday())}>{`Today's Quiz`}</span>
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator />
+                </>
+                )}
                 <DropdownMenuLabel>Previous Quizzes</DropdownMenuLabel>
                 {userQuizzes.slice(0, 5).map((q, idx) => (
-                  <DropdownMenuItem asChild className={getMenuItemClassName(q.date === quiz?.date)} key={idx}>
-                    <Link href={`?display=${q.date}`}>{q.date}</Link>
+                  <DropdownMenuItem asChild className={getMenuItemClassName(q.date === date)} key={idx}>
+                    <span className="cursor-pointer" onClick={() => setDate(q.date)}>{q.date}</span>
                   </DropdownMenuItem>
                 ))}
               </>) : null}
