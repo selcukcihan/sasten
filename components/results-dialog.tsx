@@ -1,11 +1,12 @@
 'use client'
 
 import { useEffect, useState } from "react"
-import { QuizSubmission } from "../core/db"
+import { Quiz, QuizSubmission } from "../core/db"
 import { Button } from "./ui/button"
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "./ui/dialog"
 import Link from "next/link"
 import { Leaderboard } from "./leaderboard"
+import { getToday } from "../core/date"
 
 const getOutcome = (userQuiz: QuizSubmission) => {
   if (!userQuiz) return
@@ -33,15 +34,17 @@ const getTweetShareLink = (userQuiz?: QuizSubmission) => {
 
 export function ResultsDialog(props: any) {
   const userQuiz = props.userQuiz as QuizSubmission | undefined
+  const quiz = props.quiz as Quiz | undefined
   const [open, setOpen] = useState(false)
   const [shown, setShown] = useState(false)
   const outcome = userQuiz ? getOutcome(userQuiz) : ''
-  const displayingTodaysQuiz = props.displayingTodaysQuiz !== false
+  const today = getToday()
+  const displayingTodaysQuiz = userQuiz && userQuiz.date === quiz?.date && quiz?.date === today
 
   useEffect(() => {
     if (userQuiz && !shown && displayingTodaysQuiz) {
-      setOpen(true)
       setShown(true)
+      setOpen(true)
     }
   }, [userQuiz, shown, displayingTodaysQuiz])
 

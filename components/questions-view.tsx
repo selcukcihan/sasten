@@ -24,6 +24,7 @@ import { Quiz, QuizSubmission, User } from '../core/db'
 import { useState, useEffect, useRef } from "react"
 import { submitQuiz, submitSignIn } from "../app/actions"
 import { useFormStatus } from "react-dom"
+import { ResultsDialog } from './results-dialog'
 
 enum OptionButtonState {
   Unanswered,
@@ -147,6 +148,7 @@ export function QuestionsView(props: any) {
         </div>
         }
       </div>
+      <ResultsDialog {...props} {...{ quiz, userQuiz }} />
     </main>
   )
 }
