@@ -1,7 +1,10 @@
 import { auth } from "@/auth"
-import { QuizView } from "../components/quiz-view"
 import { getTodaysQuiz, getUsersQuiz, getQuiz, getUser, getTopScores, getAllScores, getUserQuizzes, Quiz } from "../core/db"
 import { getToday } from "../core/date";
+import QuizView from "../components/quiz-view";
+import { Leaderboard } from "../components/leaderboard";
+import Link from "next/link";
+import { ResultsDialog } from "../components/results-dialog";
 
 export default async function Home({
   searchParams,
@@ -14,7 +17,7 @@ export default async function Home({
   if (searchParams?.["date"] && session?.user?.email === 'selcukcihan@gmail.com') {
     const quiz = await getQuiz(searchParams["date"] as string)
     if (quiz) {
-      return <QuizView session={session} quiz={quiz} />
+      return <MainView session={session} quiz={quiz} />
     }
   }
 
@@ -42,9 +45,26 @@ export default async function Home({
       getAllScores(),
       getTopScores(),
     ])
-    return <QuizView {...{ session, quiz, user, userQuiz, topScores, allScores, userQuizzes, displayingTodaysQuiz: quiz === todaysQuiz }} />
+    return <MainView {...{ session, quiz, user, userQuiz, topScores, allScores, userQuizzes, displayingTodaysQuiz: quiz === todaysQuiz }} />
   } else {
     const topScores = await getTopScores()
-    return <QuizView {...{ session, quiz, topScores, displayingTodaysQuiz: quiz === todaysQuiz }} />
+    return <MainView {...{ session, quiz, topScores, displayingTodaysQuiz: quiz === todaysQuiz }} />
   }
+}
+
+function MainView(props: any) {
+  return (
+    <div className="lg:flex lg:flex-col lg:h-screen">
+      <div className="flex flex-col min-h-svh lg:min-h-fit lg:h-full">
+        <QuizView {...props} />
+      </div>
+      <footer className="bg-gray-900 text-white py-4 px-6">
+        <Leaderboard {...props} showUserStats={true} />
+        <div className="text-xs text-gray-300 underline underline-offset-2 text-center lg:text-right">
+          <Link href={'https://github.com/selcukcihan/sasten'} target="#blank">Check out the project on GitHub</Link>
+        </div>
+      </footer>
+      <ResultsDialog {...props} />
+    </div>
+  )
 }
