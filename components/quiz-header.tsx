@@ -2,7 +2,7 @@
 
 import { Button } from "@/components/ui/button"
 import { DropdownMenuTrigger, DropdownMenuItem, DropdownMenuContent, DropdownMenu, DropdownMenuSeparator, DropdownMenuLabel } from "@/components/ui/dropdown-menu"
-import { QuizSubmission, User } from '../core/db'
+import { Quiz, QuizSubmission, User } from '../core/db'
 import Link from "next/link"
 import { submitSignOut, submitSignIn } from "../app/actions"
 import { getToday } from "../core/date"
@@ -22,6 +22,9 @@ export function QuizHeader(props: any) {
   const user = props.user as User | undefined
   const userQuizzes = (props.userQuizzes || []) as QuizSubmission[]
   const date = props.date as string
+  const setUserQuiz = props.setUserQuiz as any
+  const setAnswers = props.setAnswers as any
+  const quiz = props.quiz as Quiz
   const setDate = props.setDate as (date: string) => void
 
   return (
@@ -48,6 +51,8 @@ export function QuizHeader(props: any) {
                 <form
                   action={async () => {
                     await submitSignOut()
+                    setUserQuiz(null)
+                    setAnswers(quiz.questions.map(() => -1))
                   }}
                 >
                   <Button size="sm" variant="outline" type="submit">

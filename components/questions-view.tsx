@@ -65,7 +65,8 @@ export function QuestionsView(props: any) {
   const setUserQuiz = props.setUserQuiz as any
   const user = props.user as User | undefined
   const [currentQuestion, setCurrentQuestion] = useState(0)
-  const [answers, setAnswers] = useState(userQuiz?.answers || quiz.questions.map(() => -1))
+  const answers = props.answers as number[]
+  const setAnswers = props.setAnswers as any
   const [submitting, setSubmitting] = useState(false)
 
   useEffect(() => {
@@ -79,7 +80,7 @@ export function QuestionsView(props: any) {
         ;(submitForm.current as any)?.requestSubmit()
       }
     }
-  }, [answers, storageKey, user, userQuiz])
+  }, [answers, storageKey, user, userQuiz, setAnswers])
 
   const getOptionButton = (answer: string, optionIndex: number) => {
     let optionButtonState = OptionButtonState.Unanswered

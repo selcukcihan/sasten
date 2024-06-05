@@ -31,6 +31,9 @@ export async function getQuizDetails(date?: string) {
   if (session?.user?.id) {
     const _date = date || getToday()
     const [quiz, userQuiz] = await Promise.all([getQuiz(_date), getUsersQuiz(session.user.id, _date)])
+    if (!quiz) {
+      throw new Error(`Quiz ${_date} not found`)
+    }
     return { quiz, userQuiz }
   } else {
     const quiz = await getTodaysQuiz()

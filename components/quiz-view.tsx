@@ -8,13 +8,14 @@ import { Quiz, QuizSubmission } from "../core/db"
 import { getQuizDetails } from "../app/actions"
 
 export default function QuizView(props: any) {
-  const todaysQuiz = props.quiz as Quiz | null
+  const todaysQuiz = props.quiz as Quiz
   const todaysQuizSubmission = props.userQuiz as QuizSubmission | null
 
-  const [quiz, setQuiz] = useState<Quiz | null>(todaysQuiz)
+  const [quiz, setQuiz] = useState<Quiz>(todaysQuiz)
   const [userQuiz, setUserQuiz] = useState<QuizSubmission | null>(todaysQuizSubmission)
   const [date, setDate] = useState(getToday())
   const [loading, setLoading] = useState(false)
+  const [answers, setAnswers] = useState(userQuiz?.answers || quiz.questions.map(() => -1))
 
   useEffect(() => {
     async function initData() {
@@ -30,8 +31,8 @@ export default function QuizView(props: any) {
 
   return (
     <>
-      <QuizHeader {...props} {...{ loading, setLoading, date, setDate }} />
-      <QuestionsView {...props} {...{ quiz, userQuiz, setUserQuiz, loading, setLoading, date, setDate }}/>
+      <QuizHeader {...props} {...{ quiz, loading, setLoading, date, setDate, setUserQuiz, setAnswers }} />
+      <QuestionsView {...props} {...{ quiz, userQuiz, setUserQuiz, loading, setLoading, date, setDate, answers, setAnswers }}/>
       <LoadingView loading={loading} date={date} />
     </>
   )
