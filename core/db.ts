@@ -31,6 +31,11 @@ export interface User {
   email: string
   score: number
   gamesPlayed: number
+  isAdmin?: boolean
+}
+
+export interface DetailedUser extends User {
+  name: string
 }
 
 export interface LeaderBoardUser {
@@ -240,6 +245,7 @@ export const getUser = async (userId: string): Promise<User | null> => {
       email: authUser[0].email,
       score: quizUser.length ? quizUser[0].score : 0,
       gamesPlayed: quizUser.length ? quizUser[0].gamesPlayed : 0,
+      isAdmin: quizUser.length ? !!(quizUser[0].isAdmin) : false,
     }
   } else {
     return null
@@ -261,4 +267,50 @@ export const getUserQuizzes = async (userId: string): Promise<QuizSubmission[]> 
     answers: item.answers,
     score: item.score,
   }))
+}
+
+export const getAllUsers = async (): Promise<DetailedUser[]> => {
+  let lastEvaluatedKey = undefined
+  let allUsers: DetailedUser[] = []
+  do {
+    const response: any = await docClient.send(new QueryCommand({
+      TableName: process.env.DYNAMODB_TABLE_NAME || '',
+      IndexName: 'GSI1',
+      KeyConditionExpression: 'GSI1PK = :gsi1pk and begins_with(GSI1SK, :gsi1sk)',
+      ExpressionAttributeValues: {
+        ':gsi1pk': 'LEADER_BOARD',
+        ':gsi1sk': 'SCORE#',
+      },
+      ExclusiveStartKey: lastEvaluatedKey,
+    }))
+    allUsers = allUsers.concat((response.Items || []).map((item: any) => ({
+      score: item.score,
+      id: item.pk.split('#')[1],
+      name: item.name,
+      email: item.email,
+      gamesPlayed: item.gamesPlayed,
+    })))
+    lastEvaluatedKey = response.LastEvaluatedKey
+  } while (lastEvaluatedKey)
+  return allUsers
+}
+
+export const getAllAuthUsers = async (): Promise<string[]> => {
+  let lastEvaluatedKey = undefined
+  let allUsers: string[] = []
+  do {
+    const response: any = await docClient.send(new QueryCommand({
+      TableName: process.env.DYNAMODB_TABLE_NAME || '',
+      IndexName: 'GSI1',
+      KeyConditionExpression: 'GSI1PK = :gsi1pk and begins_with(GSI1SK, :gsi1sk)',
+      ExpressionAttributeValues: {
+        ':gsi1pk': 'ACCOUNT#google',
+        ':gsi1sk': 'ACCOUNT#',
+      },
+      ExclusiveStartKey: lastEvaluatedKey,
+    }))
+    allUsers = allUsers.concat((response.Items || []).map((item: any) => item.userId as string))
+    lastEvaluatedKey = response.LastEvaluatedKey
+  } while (lastEvaluatedKey)
+  return allUsers
 }

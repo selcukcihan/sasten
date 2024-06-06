@@ -78,6 +78,16 @@ export function QuizHeader(props: any) {
                   </DropdownMenuItem>
                 ))}
               </>) : null}
+              {user.isAdmin && (
+              <>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem>
+                  <Link href="/admin">
+                    Admin Panel
+                  </Link>
+                </DropdownMenuItem>
+              </>
+              )}
             </DropdownMenuContent>
           </DropdownMenu>) : (
           <form

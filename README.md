@@ -24,6 +24,8 @@ Take a look at the app live on https://quiz.selcukcihan.com
   gsi1sk: SCORE#{score}#{userId},
   score: number,
   gamesPlayed: number,
+  name: string,
+  email: string
 }
 ```
 
