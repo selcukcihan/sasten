@@ -1,13 +1,12 @@
 import type { Metadata } from "next"
 import { Inter } from "next/font/google"
 import "./globals.css"
-import { getDefaultQuiz, getTodaysQuiz } from "../core/db"
+import { getTodaysQuiz } from "../core/db"
 
 const inter = Inter({ subsets: ["latin"] });
 
 const title = "Dev Quiz"
 const description = "Test your programming knowledge with daily quizzes."
-const firstQuestion = getDefaultQuiz().questions[0].question
 
 const images = [{
   url: `https://quiz.selcukcihan.com/icon.png`,
@@ -16,7 +15,7 @@ const images = [{
   alt: title,
 }]
 
-export async function generateMetadata() {
+export async function generateMetadata(): Promise<Metadata> {
   const dynamicQuestion = await getTodaysQuiz()
   const shortestQuestion = dynamicQuestion.questions.reduce((prev, curr) => prev.question.length < curr.question.length ? prev : curr)
   return {
@@ -30,6 +29,14 @@ export async function generateMetadata() {
       description: shortestQuestion.question,
       type: 'website',
       url: 'https://quiz.selcukcihan.com',
+      images,
+    },
+    twitter: {
+      site: '@scihan',
+      creator: '@scihan',
+      card: 'summary',
+      title: description,
+      description: shortestQuestion.question,
       images,
     },
   }
