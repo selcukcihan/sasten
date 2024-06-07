@@ -85,10 +85,10 @@ export const getAllScores = async (): Promise<LeaderBoardUser[]> => {
     const response: any = await docClient.send(new QueryCommand({
       TableName: process.env.DYNAMODB_TABLE_NAME || '',
       IndexName: 'GSI1',
-      KeyConditionExpression: 'GSI1PK = :gsi1pk and begins_with(GSI1SK, :gsi1sk)',
+      KeyConditionExpression: 'GSI1PK = :GSI1PK and begins_with(GSI1SK, :GSI1SK)',
       ExpressionAttributeValues: {
-        ':gsi1pk': 'LEADER_BOARD',
-        ':gsi1sk': 'SCORE#',
+        ':GSI1PK': 'LEADER_BOARD',
+        ':GSI1SK': 'SCORE#',
       },
       ScanIndexForward: false,
       ExclusiveStartKey: lastEvaluatedKey,
@@ -107,10 +107,10 @@ export const getTopScores = async (): Promise<LeaderBoardUser[]> => {
   const response = await docClient.send(new QueryCommand({
     TableName: process.env.DYNAMODB_TABLE_NAME || '',
     IndexName: 'GSI1',
-    KeyConditionExpression: 'GSI1PK = :gsi1pk and begins_with(GSI1SK, :gsi1sk)',
+    KeyConditionExpression: 'GSI1PK = :GSI1PK and begins_with(GSI1SK, :GSI1SK)',
     ExpressionAttributeValues: {
-      ':gsi1pk': 'LEADER_BOARD',
-      ':gsi1sk': 'SCORE#',
+      ':GSI1PK': 'LEADER_BOARD',
+      ':GSI1SK': 'SCORE#',
     },
     ScanIndexForward: false,
     Limit: LEADER_BOARD_NUMBER_OF_USERS,
@@ -146,10 +146,10 @@ export const completeQuiz = async (user: AuthUser, date: string, answers: number
             score: {
               N: score.toString(),
             },
-            gsi1pk: {
+            GSI1PK: {
               S: `SUBMISSION#${date}`,
             },
-            gsi1sk: {
+            GSI1SK: {
               S: `USER#${user.id}`,
             },
           },
@@ -170,7 +170,7 @@ export const completeQuiz = async (user: AuthUser, date: string, answers: number
           ExpressionAttributeNames: {
             '#userName': 'name',
           },
-          UpdateExpression: 'ADD score :score, gamesPlayed :gamesPlayed  SET GSI1PK = :gsi1pk, GSI1SK = :gsi1sk, email = :email, #userName = :userName',
+          UpdateExpression: 'ADD score :score, gamesPlayed :gamesPlayed  SET GSI1PK = :GSI1PK, GSI1SK = :GSI1SK, email = :email, #userName = :userName',
           ExpressionAttributeValues: {
             ':score': {
               N: score.toString(),
@@ -178,10 +178,10 @@ export const completeQuiz = async (user: AuthUser, date: string, answers: number
             ':gamesPlayed': {
               N: '1',
             },
-            ':gsi1pk': {
+            ':GSI1PK': {
               S: `LEADER_BOARD`,
             },
-            ':gsi1sk': {
+            ':GSI1SK': {
               S: `SCORE#${(_user.score + score).toString().padStart(10, '0')}#${user.id}`,
             },
             ':email': {
@@ -276,10 +276,10 @@ export const getAllUsers = async (): Promise<DetailedUser[]> => {
     const response: any = await docClient.send(new QueryCommand({
       TableName: process.env.DYNAMODB_TABLE_NAME || '',
       IndexName: 'GSI1',
-      KeyConditionExpression: 'GSI1PK = :gsi1pk and begins_with(GSI1SK, :gsi1sk)',
+      KeyConditionExpression: 'GSI1PK = :GSI1PK and begins_with(GSI1SK, :GSI1SK)',
       ExpressionAttributeValues: {
-        ':gsi1pk': 'LEADER_BOARD',
-        ':gsi1sk': 'SCORE#',
+        ':GSI1PK': 'LEADER_BOARD',
+        ':GSI1SK': 'SCORE#',
       },
       ExclusiveStartKey: lastEvaluatedKey,
     }))
@@ -302,10 +302,10 @@ export const getAllAuthUsers = async (): Promise<string[]> => {
     const response: any = await docClient.send(new QueryCommand({
       TableName: process.env.DYNAMODB_TABLE_NAME || '',
       IndexName: 'GSI1',
-      KeyConditionExpression: 'GSI1PK = :gsi1pk and begins_with(GSI1SK, :gsi1sk)',
+      KeyConditionExpression: 'GSI1PK = :GSI1PK and begins_with(GSI1SK, :GSI1SK)',
       ExpressionAttributeValues: {
-        ':gsi1pk': 'ACCOUNT#google',
-        ':gsi1sk': 'ACCOUNT#',
+        ':GSI1PK': 'ACCOUNT#google',
+        ':GSI1SK': 'ACCOUNT#',
       },
       ExclusiveStartKey: lastEvaluatedKey,
     }))
@@ -313,4 +313,77 @@ export const getAllAuthUsers = async (): Promise<string[]> => {
     lastEvaluatedKey = response.LastEvaluatedKey
   } while (lastEvaluatedKey)
   return allUsers
+}
+
+export interface QuizDetails {
+  date: string
+  completedUsers: number
+  averageScore: number
+  questions: {
+    text: string
+    correctAnswers: number
+    incorrectAnswers: number
+  }[]
+}
+
+export const getAllSubmissionsForQuiz = async (date: string): Promise<QuizSubmission[]> => {
+  let lastEvaluatedKey = undefined
+  let allSubmissions: QuizSubmission[] = []
+  do {
+    const response: any = await docClient.send(new QueryCommand({
+      TableName: process.env.DYNAMODB_TABLE_NAME || '',
+      IndexName: 'GSI1',
+      KeyConditionExpression: 'GSI1PK = :GSI1PK and begins_with(GSI1SK, :GSI1SK)',
+      ExpressionAttributeValues: {
+        ':GSI1PK': `SUBMISSION#${date}`,
+        ':GSI1SK': 'USER#',
+      },
+      ExclusiveStartKey: lastEvaluatedKey,
+    }))
+    allSubmissions = allSubmissions.concat((response.Items || []).map((item: any) => ({
+      date,
+      answers: item.answers,
+      score: item.score,
+    })))
+    lastEvaluatedKey = response.LastEvaluatedKey
+  } while (lastEvaluatedKey)
+  return allSubmissions
+}
+
+export const getOverallPerformance = async (): Promise<QuizDetails[]> => {
+  const lastDates = Array.from({ length: 5 }, (_, i) => {
+    const date = new Date()
+    date.setDate(date.getDate() - i)
+    return date.toISOString().split('T')[0]
+  })
+
+  const lastQuizzes: Quiz[] = (await Promise.all(lastDates.map((date) => getQuiz(date)))).filter((quiz) => quiz) as Quiz[]
+  const lastSubmissions: QuizSubmission[][] = []
+  for (const quiz of lastQuizzes) {
+    lastSubmissions.push(await getAllSubmissionsForQuiz(quiz.date))
+  }
+
+  // Filter out quizzes that don't have submissions
+  const validIndices = lastSubmissions.map((submissions) => submissions.length > 0)
+
+  return lastQuizzes.map((quiz, i) => {
+    if (!validIndices[i]) {
+      return null
+    }
+    const submissions = lastSubmissions[i]
+    const questions = quiz.questions.map((question, j) => {
+      const correctAnswers = submissions.filter((submission) => submission.answers[j] === question.answer).length
+      return {
+        text: question.question,
+        correctAnswers,
+        incorrectAnswers: submissions.length - correctAnswers,
+      }
+    })
+    return {
+      date: quiz.date,
+      completedUsers: submissions.length,
+      averageScore: submissions.reduce((prev, curr) => prev + curr.score, 0) / submissions.length,
+      questions,
+    }
+  }).filter((quiz) => quiz) as QuizDetails[]
 }

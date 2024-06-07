@@ -20,8 +20,8 @@ Take a look at the app live on https://quiz.selcukcihan.com
 {
   pk: USER#{userId},
   sk: QUIZ_USER#{userId},
-  gsi1pk: LEADER_BOARD,
-  gsi1sk: SCORE#{score}#{userId},
+  GSI1PK: LEADER_BOARD,
+  GSI1SK: SCORE#{score}#{userId},
   score: number,
   gamesPlayed: number,
   name: string,
@@ -59,8 +59,8 @@ Represents a quiz with questions, options to select and the correct answer for e
   sk: QUIZ#{date},
   answers: number[],
   score: number,
-  gsi1pk: SUBMISSION#{date},
-  gsi1sk: USER#{userId},
+  GSI1PK: SUBMISSION#{date},
+  GSI1SK: USER#{userId},
 }
 ```
 
@@ -72,8 +72,8 @@ Represents a quiz with questions, options to select and the correct answer for e
 {
   pk: USER#{userId},
   sk: USER#{userId},
-  gsi1pk: USER#{email},
-  gsi1sk: USER#{email},
+  GSI1PK: USER#{email},
+  GSI1SK: USER#{email},
   email: string,
   name: string,
 }
@@ -84,8 +84,8 @@ Represents a quiz with questions, options to select and the correct answer for e
 ```
   pk: USER#{userId},
   sk: ACCOUNT#{provider}#{providerAccountId},
-  gsi1pk: ACCOUNT#{provider},
-  gsi1sk: ACCOUNT#{providerAccountId},
+  GSI1PK: ACCOUNT#{provider},
+  GSI1SK: ACCOUNT#{providerAccountId},
   provider: string,
   providerAccountId: string,
   userId: string,
@@ -96,8 +96,8 @@ Represents a quiz with questions, options to select and the correct answer for e
 ```
   pk: USER#{userId},
   sk: SESSION#{sessionToken},
-  gsi1pk: SESSION#{sessionToken},
-  gsi1sk: SESSION#{sessionToken},
+  GSI1PK: SESSION#{sessionToken},
+  GSI1SK: SESSION#{sessionToken},
   userId: string,
   sessionToken: string,
   expires: number // after this date, TTL expires and dynamodb will delete the record
