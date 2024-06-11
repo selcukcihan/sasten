@@ -1,5 +1,6 @@
 import type { Metadata } from "next"
 import { Inter } from "next/font/google"
+import { GoogleAnalytics } from '@next/third-parties/google'
 import "./globals.css"
 import { getTodaysQuiz } from "../core/db"
 
@@ -42,23 +43,6 @@ export async function generateMetadata(): Promise<Metadata> {
   }
 }
 
-/*
-export const metadata: Metadata = {
-  title: description,
-  description: firstQuestion,
-  applicationName: title,
-  keywords: ['quiz', 'programming', 'dev', 'developer', 'coding', 'code', 'software', 'engineer', 'web', 'app', 'application', 'site', 'website', 'daily', 'challenge', 'test', 'knowledge', 'skills', 'learning', 'education', 'fun', 'game', 'puzzle', 'problem', 'solution', 'answer', 'question', 'multiple', 'choice', 'true', 'false', 'boolean', 'score', 'leaderboard', 'top', 'best', 'rank'],
-  openGraph: {
-    siteName: title,
-    title: description,
-    description: firstQuestion,
-    type: 'website',
-    url: 'https://quiz.selcukcihan.com',
-    images,
-  },
-};
-*/
-
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -67,6 +51,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={inter.className}>{children}</body>
+      <GoogleAnalytics gaId="G-D3463Q7XJM" />
     </html>
   );
 }
