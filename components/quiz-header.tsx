@@ -96,8 +96,8 @@ export function QuizHeader(props: any) {
             }}
           >
             <Button size="sm" type="submit" variant="secondary" className="lg:text-base lg:font-semibold">
-              <ChromeIcon className="h-4 w-4 mr-2" />
-              Google sign in
+              <UserIcon className="h-4 w-4 mr-2" />
+              Sign in
             </Button>
           </form>
           )}
@@ -127,6 +127,26 @@ function ChromeIcon(props: any) {
       <line x1="21.17" x2="12" y1="8" y2="8" />
       <line x1="3.95" x2="8.54" y1="6.06" y2="14" />
       <line x1="10.88" x2="15.46" y1="21.94" y2="14" />
+    </svg>
+  )
+}
+
+function UserIcon(props: any) {
+  return (
+    <svg
+      {...props}
+      xmlns="http://www.w3.org/2000/svg"
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2" />
+      <circle cx="12" cy="7" r="4" />
     </svg>
   )
 }

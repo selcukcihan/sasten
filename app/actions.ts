@@ -17,7 +17,7 @@ export async function submitQuiz(quiz: Quiz, answers: number[]) {
 }
 
 export async function submitSignIn() {
-  await signIn("google")
+  await signIn()
 }
 
 export async function submitSignOut() {

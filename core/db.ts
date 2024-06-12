@@ -295,7 +295,7 @@ export const getAllUsers = async (): Promise<DetailedUser[]> => {
   return allUsers
 }
 
-export const getAllAuthUsers = async (): Promise<string[]> => {
+const getAllAuthUsersOf = async (provider: string): Promise<string[]> => {
   let lastEvaluatedKey = undefined
   let allUsers: string[] = []
   do {
@@ -304,7 +304,7 @@ export const getAllAuthUsers = async (): Promise<string[]> => {
       IndexName: 'GSI1',
       KeyConditionExpression: 'GSI1PK = :GSI1PK and begins_with(GSI1SK, :GSI1SK)',
       ExpressionAttributeValues: {
-        ':GSI1PK': 'ACCOUNT#google',
+        ':GSI1PK': `ACCOUNT#${provider}`,
         ':GSI1SK': 'ACCOUNT#',
       },
       ExclusiveStartKey: lastEvaluatedKey,
@@ -313,6 +313,10 @@ export const getAllAuthUsers = async (): Promise<string[]> => {
     lastEvaluatedKey = response.LastEvaluatedKey
   } while (lastEvaluatedKey)
   return allUsers
+}
+
+export const getAllAuthUsers = async (): Promise<string[]> => {
+  return (await Promise.all(['google', 'github'].map(getAllAuthUsersOf))).flat()
 }
 
 export interface QuizDetails {
